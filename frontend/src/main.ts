@@ -1,27 +1,25 @@
-import { createApp } from 'vue'
-import './style.css'
-import App from './App.vue'
+import { createApp } from "vue";
+import App from "./App.vue";
+import router from "./router";
+// main.js
+import process from "process";
 
-import ArcoVue from '@arco-design/web-vue';
-import ArcoVueIcon from '@arco-design/web-vue/es/icon';
-import '@arco-design/web-vue/dist/arco.css';
+// 或者，如果您需要全局可用的 `process` 变量
+global.process = process;
 
-import "./assets/arco-palette.less"
+import ArcoVue from "@arco-design/web-vue";
+import ArcoVueIcon from "@arco-design/web-vue/es/icon";
+import "@arco-design/web-vue/dist/arco.css";
 
-import 'highlight.js/styles/github-dark.css';
+import { createPinia } from "pinia";
 
-// 路由控制
-import "./router/global_forward_guard"
+import "@/router/global_forward_guard";
 
-import { router } from "./router"
-
-import { createPinia } from 'pinia'
-
-const pinia = createPinia()
+const pinia = createPinia();
 const app = createApp(App);
 
+app.use(router);
 app.use(ArcoVue);
 app.use(ArcoVueIcon);
-app.use(router);
-app.use(pinia)
-app.mount('#app');
+app.use(pinia);
+app.mount("#app");

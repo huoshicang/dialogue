@@ -1,4 +1,5 @@
 import ACCESS_ENUM from "./access-enum";
+import { UserState } from "@/store/modules/user/type";
 
 /**
  * 检查权限
@@ -8,11 +9,11 @@ import ACCESS_ENUM from "./access-enum";
  */
 
 const checkAccess = (
-  loginUser: any,
+  loginUser: UserState,
   needAccess: string = ACCESS_ENUM.NOT_LOGIN
 ): boolean => {
   // 获取登录用户的角色，如果用户未登录，则角色为 NOT_LOGIN
-  const loginUserAccess = loginUser?.userRole ?? ACCESS_ENUM.NOT_LOGIN;
+  const loginUserAccess = loginUser?.role ?? ACCESS_ENUM.NOT_LOGIN;
 
   if (needAccess === ACCESS_ENUM.NOT_LOGIN) {
     // 如果需要的访问权限为 NOT_LOGIN

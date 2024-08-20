@@ -11,12 +11,9 @@
     <!--    <div>100px</div>-->
     <!--  </a-col>-->
     <!--</a-row>-->
-    
   </a-layout-content>
 </template>
-<script setup lang="ts">
-
-</script>
+<script setup lang="ts"></script>
 <style scoped>
 .grid-demo .arco-col {
   height: 48px;

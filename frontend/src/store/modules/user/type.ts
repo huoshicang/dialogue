@@ -1,5 +1,5 @@
-export type RoleType = '' | '*' | 'admin' | 'user' | undefined;
-export type NameType = '未登录' | string;
+export type RoleType = "" | "*" | "admin" | "user" | undefined;
+export type NameType = "未登录" | string;
 export interface UserState {
   name: NameType;
   avatar?: string;

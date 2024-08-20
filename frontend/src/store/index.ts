@@ -1,4 +1,3 @@
-import useUserStore from "./modules/user";
+import useUserStore from "./modules/user/UserIndex";
 
-export {useUserStore};
-
+export { useUserStore };

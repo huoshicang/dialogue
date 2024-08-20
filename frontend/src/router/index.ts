@@ -1,48 +1,44 @@
-import {createRouter, createWebHistory, RouteRecordRaw} from 'vue-router'
-//import "./global_forward_guard"
+import ACCESS_ENUM from "@/router/access-enum";
+import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 
-import {
-  ChatbubbleOutline as Chat,
-} from '@vicons/ionicons5'
-import ACCESS_ENUM from "./access-enum";
-
-const routes: readonly RouteRecordRaw[] = [
+const routes: Array<RouteRecordRaw> = [
   {
-    path: '/',
-    name: 'default-layout',
+    path: "/",
+    name: "default-layout",
     components: {
       app_view: () => import("../layout/default-layout.vue"),
     },
     children: [
       {
-        path: 'chat',
-        name: 'chat',
+        path: "chat",
+        name: "chat",
         components: {
-          layout_view: () => import("../components/chat/index.vue")
+          layout_view: () => import("../components/chat/ChatIndex.vue"),
         },
         meta: {
-          title: '聊天',
+          title: "聊天",
           label: true,
-          icon: Chat,
-        }
+        },
       },
-    ]
+    ],
   },
   {
-    path: '/login',
-    name: 'login',
+    path: "/login/:log",
+    name: "login",
     components: {
-      app_view: () => import("../components/login/index.vue")
+      app_view: () => import("../components/login/LoginIndex.vue"),
     },
     meta: {
-      title: '登录',
+      title: "登录",
       label: false,
       access: ACCESS_ENUM.NOT_LOGIN,
     },
   },
-]
+];
 
-export const router = createRouter({
+const router = createRouter({
   history: createWebHistory(),
   routes,
-})
+});
+
+export default router;

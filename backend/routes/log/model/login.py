@@ -8,14 +8,13 @@ from database.mongo import MongoDBClient
 from database.redis_client import RedisClient
 from utils.hash_password import hash_password
 import uuid
-import jwt
+
+from utils.token import sign
 
 logger = get_logger(__name__)
 
 
-async def login_routes(data, request: Request):
-    headers = dict(request.headers)  # 获取请求头
-
+async def login_routes(data):
     try:
         find_info = MongoDBClient("users").find_data(
             {
@@ -39,8 +38,8 @@ async def login_routes(data, request: Request):
             return JSONResponse(
                 status_code=status.HTTP_409_CONFLICT,
                 content={
-                    "status_code": status.HTTP_409_CONFLICT,
                     "message": "用户名不存在 或密码错误",
+                    "status_code": status.HTTP_409_CONFLICT,
                 })
 
         find_info['_id'] = str(find_info['_id'])
@@ -63,11 +62,6 @@ async def login_routes(data, request: Request):
         # 生成加密盐
         time_stamp = str(int(time.time()))
 
-        # 生成token
-        token = jwt.encode({
-            "UUID": UUID
-        }, time_stamp, algorithm='HS256')
-
         return JSONResponse(
             status_code=status.HTTP_200_OK,
             content={
@@ -78,7 +72,9 @@ async def login_routes(data, request: Request):
                 },
             },
             headers={
-                "Authorization": f"Bearer {token}",
+                "Authorization": f"Bearer {sign({
+                    "UUID": UUID
+                }, time_stamp, )}",
                 "X-Timestamp": time_stamp,
             },
         )

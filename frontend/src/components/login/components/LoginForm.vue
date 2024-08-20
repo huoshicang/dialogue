@@ -2,7 +2,7 @@
   <div class="login-form-wrapper">
     <div class="login-form-title">欢迎</div>
     <div class="login-form-sub-title">欢迎登录</div>
-    <div class="login-form-error-msg"/>
+    <div class="login-form-error-msg" />
     <a-form
       ref="loginForm"
       :model="userInfo"
@@ -14,10 +14,11 @@
         field="account"
         :rules="[{ required: true, message: '请输入用户名' }]"
         :validate-trigger="['change', 'blur']"
-        hide-label>
+        hide-label
+      >
         <a-input v-model="userInfo.account" placeholder="请输入用户名">
           <template #prefix>
-            <icon-user/>
+            <icon-user />
           </template>
         </a-input>
       </a-form-item>
@@ -54,56 +55,65 @@
 </template>
 
 <script lang="ts" setup>
-import {ref, reactive} from 'vue';
-import {useRouter} from 'vue-router';
-import {Api} from "../../../api/api";
-import {ValidatedError} from '@arco-design/web-vue/es/form/interface';
-import {login_type} from "../../../types/login";
-import {Message} from "@arco-design/web-vue";
-import {a} from "vite/dist/node/types.d-aGj9QkWt";
+import { ref, reactive } from "vue";
+import { Api } from "@/api/api";
+import { ValidatedError } from "@arco-design/web-vue/es/form/interface";
+import { useRoute } from "vue-router";
+import { Message } from "@arco-design/web-vue";
+import { login_type } from "@/types/login/LogType";
 
-const router = useRouter();
+const route = useRoute();
+
 const loading = ref<boolean>(false);
-
 
 const loginConfig = {
   rememberPassword: true,
 };
 
+// 表单数据
 const userInfo = reactive<login_type>({
   account: "离无歌",
   password: "Miss177155",
 });
 
-const handleSubmit = async ({errors, values}: {
+/**
+ * 提交表单
+ * @param values 表单数据
+ * @param errors 表单验证错误
+ * @returns void
+ */
+const handleSubmit = async ({
+  errors,
+  values,
+}: {
   errors: Record<string, ValidatedError> | undefined;
   values: login_type;
 }) => {
-  console.log(values)
   if (loading.value) return;
   if (!errors) {
     loading.value = true;
+
+    console.log(route.params);
+
     try {
-      console.log("登录成功")
-      
-      const res = await Api.login(values)
-      
+      const res = await Api.login(values);
+
+      console.log(res);
+
       if (res.status_code === 200) {
-        console.log(res)
-        Message.success(res.message)
+        Message.success(res.data.message);
       } else {
-        Message.error(res.message)
+        Message.error(res.message);
       }
-      
     } catch (err) {
-      console.log("登录失败")
+      console.log("登录失败");
     } finally {
       loading.value = false;
     }
   }
 };
 const setRememberPassword = (value: boolean) => {
-  console.log(loginConfig, value)
+  console.log(loginConfig, value);
 };
 </script>
 
@@ -112,31 +122,31 @@ const setRememberPassword = (value: boolean) => {
   &-wrapper {
     width: 320px;
   }
-  
+
   &-title {
     color: var(--color-text-1);
     font-weight: 500;
     font-size: 24px;
     line-height: 32px;
   }
-  
+
   &-sub-title {
     color: var(--color-text-3);
     font-size: 16px;
     line-height: 24px;
   }
-  
+
   &-error-msg {
     height: 32px;
     color: rgb(var(--red-6));
     line-height: 32px;
   }
-  
+
   &-password-actions {
     display: flex;
     justify-content: space-between;
   }
-  
+
   &-register-btn {
     color: var(--color-text-3) !important;
   }

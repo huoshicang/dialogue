@@ -1,6 +1,5 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
-from fastapi import Request
 from config.logging_config import get_logger
 from routes.log.model.login import login_routes
 from routes.log.model.register import register_routes
@@ -35,8 +34,8 @@ async def register(register: Register):
 
 
 @log_router.post("/login")
-async def login(login: Login, request: Request):
+async def login(login: Login):
     return await login_routes({
         "account": login.account,
         "password": login.password
-    }, request)
+    })

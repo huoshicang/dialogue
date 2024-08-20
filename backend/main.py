@@ -50,11 +50,13 @@ async def process_time_middleware(request: Request, call_next):
         logger.info(f"{query_params}")
 
     # 打印请求头信息
-    # headers = dict(request.headers.items())
-    # logger.info(f"{headers}")
+    headers = dict(request.headers)
+    logger.info(headers)
 
     # 将Request请求传回原路由
     response = await call_next(request)
+
+    response.headers["X-Requested-Url"] = str(request.url).replace(str(request.base_url), "")
 
     return response
 

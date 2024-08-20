@@ -1,21 +1,19 @@
 <template>
   <a-layout class="layout-demo">
     <a-layout-header>
-      <GlobalHeader/>
+      <GlobalHeader />
     </a-layout-header>
     <router-view name="layout_view" v-slot="{ Component }">
       <transition name="fade">
         <keep-alive>
-          <component :is="Component"/>
+          <component :is="Component" />
         </keep-alive>
       </transition>
     </router-view>
   </a-layout>
 </template>
 <script setup>
-import GlobalHeader from "../components/global/header/index.vue"
-
-
+import GlobalHeader from "../components/global/header/GlobalIndex.vue";
 </script>
 <style scoped>
 .layout-demo {
@@ -25,7 +23,6 @@ import GlobalHeader from "../components/global/header/index.vue"
 
 .layout-demo :deep(.arco-layout-header) {
   border: 1px solid var(--color-border);
-  
 }
 
 .layout-demo :deep(.arco-layout-content) {
@@ -34,7 +31,7 @@ import GlobalHeader from "../components/global/header/index.vue"
   display: flex;
   flex-direction: column;
   justify-content: center;
-  
+
   font-stretch: condensed;
   text-align: center;
 }
