@@ -4,10 +4,10 @@
     :show-back="false"
   >
     <template #title>
-      {{ name ?? "未登录" }}
+      {{ user_info.username }}
     </template>
     <template #subtitle>
-      {{ introduction }}
+      {{ user_info.introduction }}
     </template>
     <template #extra>
       <a-button @click="bright_colors"> 亮色</a-button>
@@ -17,9 +17,9 @@
 </template>
 
 <script setup lang="ts">
-import { useUserStore } from "../../../store/index";
+import { useUserStore } from "@/store";
 
-const { name, introduction } = useUserStore().user_info;
+const user_info = useUserStore().user_info;
 
 const bright_colors = () => {
   // 设置为亮色主题

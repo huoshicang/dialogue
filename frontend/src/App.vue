@@ -12,4 +12,10 @@
 
 <script setup>
 import zhCN from "@arco-design/web-vue/es/locale/lang/zh-cn";
+import { useRouter } from "vue-router";
+import { onMounted } from "vue";
+
+const router = useRouter();
+
+onMounted(() => router.push({ path: "/chat" }));
 </script>

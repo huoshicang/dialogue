@@ -35,23 +35,27 @@ async def read_root(username: str = Query()):
 # 定义中间件
 @app.middleware("http")
 async def process_time_middleware(request: Request, call_next):
-
+    # 记录路径参数
     path_params = request.path_params
-    body = await request.json()
-    query_params = request.query_params
-
     if path_params:
-        logger.info(f"{path_params}")
+        logger.info(f"Path Parameters: {path_params}")
 
-    if body:
-        logger.info(f"{body}")
+    # 记录请求体
+    if request.method in ["POST", "PUT", "PATCH"]:
+        try:
+            body = await request.json()
+            logger.info(f"Request Body: {body}")
+        except Exception as e:
+            logger.warning(f"Failed to parse JSON body: {e}")
 
+    # 记录查询参数
+    query_params = request.query_params
     if query_params:
-        logger.info(f"{query_params}")
+        logger.info(f"Query Parameters: {query_params}")
 
     # 打印请求头信息
     headers = dict(request.headers)
-    logger.info(headers)
+    logger.info(f"token：{headers.get('authorization', "")} secret_key：{headers.get('login_id', "")}")
 
     # 将Request请求传回原路由
     response = await call_next(request)

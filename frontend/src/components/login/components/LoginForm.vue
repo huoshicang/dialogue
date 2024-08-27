@@ -58,11 +58,13 @@
 import { ref, reactive } from "vue";
 import { Api } from "@/api/api";
 import { ValidatedError } from "@arco-design/web-vue/es/form/interface";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
+
 import { Message } from "@arco-design/web-vue";
 import { login_type } from "@/types/login/LogType";
 
 const route = useRoute();
+const router = useRouter();
 
 const loading = ref<boolean>(false);
 
@@ -102,6 +104,7 @@ const handleSubmit = async ({
 
       if (res.status_code === 200) {
         Message.success(res.data.message);
+        await router.push({ path: "/chat" });
       } else {
         Message.error(res.message);
       }

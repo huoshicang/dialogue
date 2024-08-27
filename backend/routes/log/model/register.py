@@ -10,6 +10,7 @@ logger = get_logger(__name__)
 
 async def register_routes(data):
     try:
+        # 查询用户是否存在
         find_info = MongoDBClient("users").find_data(
             {
                 "$or": [
@@ -20,6 +21,7 @@ async def register_routes(data):
             {'id': True}
         )
 
+        # 用户存在
         if find_info:
             return JSONResponse(
                 status_code=status.HTTP_409_CONFLICT,
@@ -41,6 +43,7 @@ async def register_routes(data):
         # 插入数据
         insert_info = MongoDBClient("users").insert_data_one(data)
 
+        # 插入失败
         if not insert_info:
             return JSONResponse(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -49,6 +52,7 @@ async def register_routes(data):
                     "message": "注册失败",
                 })
 
+        # 插入成功
         logger.info(f"{insert_info.get('_id', None)} 注册成功")
         return JSONResponse(
             status_code=status.HTTP_200_OK,

@@ -1,7 +1,4 @@
-import time
-
 from starlette import status
-from fastapi import Request
 from starlette.responses import JSONResponse
 from config.logging_config import get_logger
 from database.mongo import MongoDBClient
@@ -9,13 +6,15 @@ from database.redis_client import RedisClient
 from utils.hash_password import hash_password
 import uuid
 
+from utils.randomStringGenerator import generate_random_string
 from utils.token import sign
 
 logger = get_logger(__name__)
 
 
-async def login_routes(data):
+async def login_routes(data, request):
     try:
+        # 查询用户信息
         find_info = MongoDBClient("users").find_data(
             {
                 "$or": [
@@ -42,14 +41,17 @@ async def login_routes(data):
                     "status_code": status.HTTP_409_CONFLICT,
                 })
 
+        # 获取用户id
         find_info['_id'] = str(find_info['_id'])
 
+        # 创建信息键
         UUID = str(uuid.uuid4())
 
-        client = RedisClient().set_key_value(UUID, find_info, ex=36000)
+        # 存储登录信息
+        redis_client = RedisClient().set_key_value(UUID, find_info)
 
         # 存储登录信息
-        if not client:
+        if not redis_client:
             return JSONResponse(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 content={
@@ -60,8 +62,12 @@ async def login_routes(data):
         logger.info(f"{data["account"]} 登录成功")
 
         # 生成加密盐
-        time_stamp = str(int(time.time()))
+        if request.headers.get('login_id'):
+            secret_key = request.headers.get('login_id')
+        else:
+            secret_key = generate_random_string()
 
+        # 返回数据
         return JSONResponse(
             status_code=status.HTTP_200_OK,
             content={
@@ -74,8 +80,8 @@ async def login_routes(data):
             headers={
                 "Authorization": f"Bearer {sign({
                     "UUID": UUID
-                }, time_stamp, )}",
-                "X-Timestamp": time_stamp,
+                }, secret_key, )}",
+                "login_id": secret_key,
             },
         )
 
