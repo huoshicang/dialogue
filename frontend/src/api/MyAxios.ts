@@ -1,6 +1,5 @@
 import axios from "axios";
 import { Buffer } from "buffer";
-import router from "@/router";
 
 // 设置全局 Buffer
 globalThis.Buffer = Buffer;
@@ -13,11 +12,12 @@ axios.defaults.headers.post["Content-Type"] = "application/json";
 axios.defaults.headers.post["Access-Control-Allow-Origin"] = "*";
 axios.defaults.baseURL = "/api";
 
-export const my_get = (url: string, data: object): Promise<any> => {
-  return axios
-    .get(url, { params: data, headers })
-    .then((res) => res)
-    .catch((err) => err);
+export const my_get = async (url: string, data: object): Promise<any> => {
+  try {
+    return await axios.get(url, { params: data, headers });
+  } catch (err) {
+    return err;
+  }
 };
 
 export const my_post = async (url: string, data: object): Promise<any> => {

@@ -6,7 +6,7 @@ from routes.log.model.login import login_routes
 from routes.log.model.profile import profile_routes
 from routes.log.model.register import register_routes
 
-log_router = APIRouter()
+log_router = APIRouter(prefix="", tags=["log"],)
 
 # 获取日志记录器
 logger = get_logger(__name__)
@@ -14,19 +14,17 @@ logger = get_logger(__name__)
 
 class Register(BaseModel):
     """
-    注册字段
+    注册
     """
     username: str
     email: str
     password: str
     confirm_password: str
-    # 可选字段
-    # address: str | None = None
 
 
 class Login(BaseModel):
     """
-    登录字段
+    登录
     """
     account: str
     password: str
@@ -38,6 +36,7 @@ async def register(register: Register):
         "username": register.username,
         "email": register.email,
         "password": register.password,
+        "confirm_password": register.confirm_password
     })
 
 

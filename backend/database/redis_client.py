@@ -111,31 +111,31 @@ class RedisClient:
 
 
 # 示例使用
-if __name__ == "__main__":
-    client = RedisClient()
-
-    # 设置键值对
-    key = "example_key"
-    value = "example_value"
-    result = client.set_key_value(key, value, ex=3600)
-    if result:
-        print(f"设置键'{key}'与值'{value}'成功.")
-    else:
-        print(f"设置键'{key}'与值'{value}'失败.")
-
-    # # 获取值
-    # retrieved_value = client.get_value(key)
-    # if retrieved_value is not None:
-    #     print(f"获取键'{key}'的值为: {retrieved_value.decode('utf-8')}")
-    # else:
-    #     print(f"获取键'{key}'的值失败.")
-    #
-    # # 删除键
-    # deleted = client.delete_key(key)
-    # if deleted:
-    #     print(f"删除键'{key}'成功.")
-    # else:
-    #     print(f"删除键'{key}'失败.")
-
-    # 关闭连接
-    client.close_connection()
+# if __name__ == "__main__":
+#     client = RedisClient()
+#
+#     # 设置键值对
+#     key = "example_key"
+#     value = "example_value"
+#     result = client.set_key_value(key, value, ex=3600)
+#     if result:
+#         print(f"设置键'{key}'与值'{value}'成功.")
+#     else:
+#         print(f"设置键'{key}'与值'{value}'失败.")
+#
+#     # # 获取值
+#     # retrieved_value = client.get_value(key)
+#     # if retrieved_value is not None:
+#     #     print(f"获取键'{key}'的值为: {retrieved_value.decode('utf-8')}")
+#     # else:
+#     #     print(f"获取键'{key}'的值失败.")
+#     #
+#     # # 删除键
+#     # deleted = client.delete_key(key)
+#     # if deleted:
+#     #     print(f"删除键'{key}'成功.")
+#     # else:
+#     #     print(f"删除键'{key}'失败.")
+#
+#     # 关闭连接
+#     client.close_connection()

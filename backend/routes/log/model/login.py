@@ -34,6 +34,7 @@ async def login_routes(data, request):
 
         # 用户信息不存在
         if not find_info:
+            logger.error(f"{data["account"]} 用户名不存在 或密码错误")
             return JSONResponse(
                 status_code=status.HTTP_409_CONFLICT,
                 content={
@@ -52,6 +53,7 @@ async def login_routes(data, request):
 
         # 存储登录信息
         if not redis_client:
+            logger.error(f"{data["account"]} 登录失败")
             return JSONResponse(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 content={
@@ -65,6 +67,7 @@ async def login_routes(data, request):
         if request.headers.get('login_id'):
             secret_key = request.headers.get('login_id')
         else:
+            #  如果不存在就后端生成
             secret_key = generate_random_string()
 
         # 返回数据

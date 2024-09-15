@@ -10,6 +10,7 @@
     </a-layout-sider>
     <a-layout>
       <ChatContent />
+    <a-layout-footer>Footer</a-layout-footer>
     </a-layout>
   </a-layout>
 </template>

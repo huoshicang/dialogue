@@ -26,13 +26,17 @@ import GlobalHeader from "../components/global/header/GlobalIndex.vue";
 }
 
 .layout-demo :deep(.arco-layout-content) {
-  color: var(--color-text-1);
-  background-color: var(--color-fill-2);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+    color: var(--color-text-1);
+    background-color: var(--color-fill-2);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    font-stretch: condensed;
+  }
 
-  font-stretch: condensed;
-  text-align: center;
+.layout-demo :deep(.arco-layout-footer) {
+  background-color: var(--color-bg-2);
+  color: var(--color-text-1);
 }
+
 </style>

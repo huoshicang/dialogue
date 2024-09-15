@@ -23,6 +23,7 @@ async def register_routes(data):
 
         # 用户存在
         if find_info:
+            logger.error(f"{data["username"]} : {data["email"]} 用户名或邮箱已存在")
             return JSONResponse(
                 status_code=status.HTTP_409_CONFLICT,
                 content={
@@ -45,6 +46,7 @@ async def register_routes(data):
 
         # 插入失败
         if not insert_info:
+            logger.error(f"{data["username"]} : {data["email"]} 注册失败")
             return JSONResponse(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 content={

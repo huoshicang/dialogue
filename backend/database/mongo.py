@@ -125,9 +125,30 @@ class MongoDBClient:
             logger.error(f"查找数据时出错: {e}")
             return None
 
+    def find_data_many_sort(self, query, projection=None, sort_field=None, sort_order=-1):
+        """
+        查找多个数据
+        :param query: 查询条件，必须是字典
+        :param projection: 查询字段，必须是字典
+        :param sort_field: 排序字段名
+        :param sort_order: 排序顺序，1为升序，-1为降序
+        :return: 查找结果
+        """
+        try:
+            cursor = self.collection.find(query, projection)
+
+            if sort_field is not None and sort_order is not None:
+                cursor = cursor.sort(sort_field, sort_order)
+
+            results = list(cursor)
+            return results
+        except errors.PyMongoError as e:
+            logger.error(f"查找数据时出错: {e}")
+            return None
+
     def find_data(self, query, projection=None):
         """
-        查找数据
+        查找数据一个
         :param query: 查询条件，必须是字典
         :param projection: 查询字段，必须是字典
         :return: 查找结果
@@ -148,3 +169,11 @@ class MongoDBClient:
             logger.error(f"MongoDB 关闭失败：{e}")
 
 
+
+
+# MongoDBClient("keys").insert_data_one({
+#     "username": "离无歌",
+#     "user_id": "",
+#     "key": "sk-key",
+#     "use_number": 0,
+# })

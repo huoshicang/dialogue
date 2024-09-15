@@ -4,6 +4,8 @@ import uvicorn
 from config.logging_config import setup_logger, get_logger
 from starlette.requests import Request
 
+from routes.c.v1 import c_index
+from routes.r.v1 import r_index
 from routes.log import log_index
 from utils.middleware import LoggingMiddleware
 
@@ -12,6 +14,8 @@ app = FastAPI()
 setup_logger()
 
 app.include_router(log_index.log_router)
+app.include_router(c_index.c_v1_router)
+app.include_router(r_index.r_v1_router)
 
 # 获取日志记录器
 logger = get_logger(__name__)
