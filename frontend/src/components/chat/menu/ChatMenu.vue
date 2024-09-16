@@ -22,7 +22,10 @@
       >
         <a-menu-item :key="item._id">{{ item.chat_title }}</a-menu-item>
         <template #content>
-          <a-doption>删除{{ item._id }}</a-doption>
+          <a-doption @click="deleteChat({
+            chat_id: item._id,
+            message_id: item.message_id,
+          })">删除此记录</a-doption>
         </template>
       </a-dropdown>
     </template>
@@ -32,7 +35,7 @@
 <script setup lang="ts">
 import { Message } from "@arco-design/web-vue";
 import ChatMenuNewChat from "@/components/chat/menu/ChatMenuNewChat.vue";
-import { onMounted, provide, ref } from "vue";
+import { onMounted, ref } from "vue";
 import { Api } from "@/api/api";
 import { useUserStore } from "@/store";
 // 用户信息
@@ -55,7 +58,7 @@ const onClickMenuItem = (key: string) => {
   Message.info({ content: `You select ${key}`, showIcon: true });
 };
 
-// 请求参数
+// 请求数据
 const getData = async () => {
   try {
     const res = await Api.get_chat_list({
@@ -73,6 +76,29 @@ const getData = async () => {
     chat_list_loading.value = false;
   }
 };
+
+
+// 删除聊天
+const deleteChat = async (data) => {
+  try {
+    const res = await Api.delete_chat({
+      user_id: user_info._id,
+      ...data
+    });
+
+    console.log(res);
+
+    if (res.status_code === 200) {
+      Message.success(res.message);
+      await getData()
+    } else {
+      Message.error(res.message);
+    }
+  } catch (err) {
+    Message.error("删除失败");
+  }
+}
+
 
 // todo历史聊天需要滚动
 

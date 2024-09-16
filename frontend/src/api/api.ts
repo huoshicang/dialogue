@@ -15,12 +15,16 @@ export const Api = {
     return await my_get("/profile", {});
   },
 
-  /* 聊天 */
+  // 获取聊天
   get_chat_list: async (data: any): Promise<any> => {
     return await my_get("/v1/retrieve/chat", data);
   },
   // 添加聊天
   add_chat: async (data: object): Promise<any> => {
     return await my_post("/v1/create/chat", data);
+  },
+  // 删除
+  delete_chat: async (data: object): Promise<any> => {
+    return await my_post("/v1/delete/chat", data);
   },
 };

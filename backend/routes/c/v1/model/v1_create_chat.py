@@ -4,6 +4,7 @@ from fastapi.responses import JSONResponse
 from config.logging_config import get_logger
 from database.mongo import MongoDBClient
 from utils.hash_password import hash_password
+from utils.updata_key_usenumber import updata_key_usenumber
 
 logger = get_logger(__name__)
 
@@ -32,6 +33,8 @@ async def v1_create_chat(data):
             {"is_deleted": False},
             {"key": True},
             'use_number')[0]
+
+        updata_key_usenumber(str(key_find_info['_id']))
 
         # 创建消息
         message_insert_info = MongoDBClient("messages").insert_data_one({

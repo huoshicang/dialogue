@@ -63,6 +63,7 @@ class Chat(BaseModel):
 
 @c_v1_router.post("/chat", response_model=Chat)
 async def chat(Chat: Chat):
+    """创建聊天"""
     return await v1_create_chat({
         "user_id": Chat.user_id,
         "user_name": Chat.user_name,

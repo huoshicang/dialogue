@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from bson import ObjectId
 from pymongo import MongoClient, errors
 
 from config.logging_config import get_logger
@@ -154,6 +155,10 @@ class MongoDBClient:
         :return: 查找结果
         """
         try:
+
+            if "_id" in query.keys():
+                query['_id'] = ObjectId(query['_id'])
+
             result = self.collection.find_one(query, projection)
             return result
         except errors.PyMongoError as e:

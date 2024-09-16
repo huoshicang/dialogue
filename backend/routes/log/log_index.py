@@ -32,6 +32,7 @@ class Login(BaseModel):
 
 @log_router.post("/register")
 async def register(register: Register):
+    """注册"""
     return await register_routes({
         "username": register.username,
         "email": register.email,
@@ -42,6 +43,7 @@ async def register(register: Register):
 
 @log_router.post("/login")
 async def login(login: Login, request: Request):
+    """登录"""
     return await login_routes({
         "account": login.account,
         "password": login.password
@@ -50,4 +52,5 @@ async def login(login: Login, request: Request):
 
 @log_router.get("/profile")
 async def profile(request: Request):
+    """验证"""
     return await profile_routes(request)

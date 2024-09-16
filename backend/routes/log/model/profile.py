@@ -11,34 +11,7 @@ async def profile_routes(request):
     try:
         headers = request.headers
 
-        if headers.get('authorization') and headers.get('login_id'):
-
-            token_info = verify(str(headers.get('authorization')).replace("Bearer ", ""),
-                                headers.get('login_id'))
-
-            if token_info:
-                UUID = token_info['UUID']
-
-                redis_client = RedisClient().get_value(UUID)
-
-                return JSONResponse(
-                    status_code=status.HTTP_200_OK,
-                    content={
-                        "status_code": status.HTTP_200_OK,
-                        "data": redis_client,
-                        "message": "获取成功",
-                    },
-                )
-
-            return JSONResponse(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                content={
-                    "status_code": status.HTTP_401_UNAUTHORIZED,
-                    "message": "获取失败",
-                }
-            )
-
-        else:
+        if not headers.get('authorization') and not headers.get('login_id'):
             logger.error(f"token：{headers.get('authorization', "")} secret_key：{headers.get('login_id', "")}")
             return JSONResponse(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -47,6 +20,43 @@ async def profile_routes(request):
                     "message": "获取失败",
                 }
             )
+
+        token_info = verify(str(headers.get('authorization')).replace("Bearer ", ""),
+                            headers.get('login_id'))
+
+        if not token_info:
+            return JSONResponse(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                content={
+                    "status_code": status.HTTP_401_UNAUTHORIZED,
+                    "message": "获取失败",
+                }
+            )
+
+        UUID = token_info['UUID']
+
+        redis_client = RedisClient().get_value(UUID)
+
+        if not redis_client:
+            return JSONResponse(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                content={
+                    "status_code": status.HTTP_401_UNAUTHORIZED,
+                    "message": "获取失败",
+                }
+            )
+
+        return JSONResponse(
+            status_code=status.HTTP_200_OK,
+            content={
+                "status_code": status.HTTP_200_OK,
+                "data": redis_client,
+                "message": "获取成功",
+            },
+        )
+
+
+
 
     except Exception as e:
         logger.error(e)

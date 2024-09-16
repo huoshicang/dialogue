@@ -1,6 +1,6 @@
 <template>
   <a-layout>
-    <a-layout-sider collapsible breakpoint="xl">
+    <a-layout-sider collapsible>
       <ChatMenu />
       <!-- trigger -->
       <template #trigger="{ collapsed }">
