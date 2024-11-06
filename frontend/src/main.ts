@@ -14,6 +14,8 @@ import "@arco-design/web-vue/dist/arco.css";
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import { createPinia } from "pinia";
 
+import NaiveUI from "naive-ui"
+
 import "@/router/global_forward_guard";
 
 const pinia = createPinia();
@@ -23,5 +25,6 @@ const app = createApp(App);
 app.use(router);
 app.use(ArcoVue);
 app.use(ArcoVueIcon);
+app.use(NaiveUI);
 app.use(pinia);
 app.mount("#app");

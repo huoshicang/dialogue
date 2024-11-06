@@ -21,7 +21,9 @@
 
 <script setup lang="ts">
 import { useUserStore } from "@/store";
-import { Message } from "@arco-design/web-vue";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 
 const user_info = useUserStore().user_info;
 
@@ -35,9 +37,7 @@ const dark_colors = () => {
   document.body.setAttribute("arco-theme", "dark");
 };
 
-const back = () => {
-  Message.info("返回");
-};
+const back = () => router.push("/");
 
 </script>
 

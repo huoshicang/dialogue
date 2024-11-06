@@ -22,10 +22,15 @@
       >
         <a-menu-item :key="item._id">{{ item.chat_title }}</a-menu-item>
         <template #content>
-          <a-doption @click="deleteChat({
-            chat_id: item._id,
-            message_id: item.message_id,
-          })">删除此记录</a-doption>
+          <a-doption
+            @click="
+              deleteChat({
+                chat_id: item._id,
+                message_id: item.message_id,
+              })
+            "
+            >删除此记录
+          </a-doption>
         </template>
       </a-dropdown>
     </template>
@@ -77,28 +82,26 @@ const getData = async () => {
   }
 };
 
-
 // 删除聊天
 const deleteChat = async (data) => {
   try {
     const res = await Api.delete_chat({
       user_id: user_info._id,
-      ...data
+      ...data,
     });
 
     console.log(res);
 
     if (res.status_code === 200) {
       Message.success(res.message);
-      await getData()
+      await getData();
     } else {
       Message.error(res.message);
     }
   } catch (err) {
     Message.error("删除失败");
   }
-}
-
+};
 
 // todo历史聊天需要滚动
 

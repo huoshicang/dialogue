@@ -41,6 +41,8 @@ async def register_routes(data):
             "role": "user",
         })
 
+        del data['confirm_password']
+
         # 插入数据
         insert_info = MongoDBClient("users").insert_data_one(data)
 

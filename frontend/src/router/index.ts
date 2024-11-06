@@ -4,20 +4,37 @@ import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
-    name: "default-layout",
     components: {
       app_view: () => import("../layout/default-layout.vue"),
     },
+    redirect:'AppIndex',
     children: [
+      {
+        path: "",
+        name: "AppIndex",
+        components: {
+          default_layout_view: () => import("../components/app/AppIndex.vue"),
+        },
+        meta: {
+          title: "AppIndex",
+          label: true,
+          access: ACCESS_ENUM.NOT_LOGIN,
+          keepAlive: true,
+          remarks: "这是默认的首页,不写path是为了让url保持干净,所以用name进行导航",
+        },
+      },
       {
         path: "chat",
         name: "chat",
         components: {
-          layout_view: () => import("../components/chat/ChatIndex.vue"),
+          default_layout_view: () => import("../components/chat/ChatIndex.vue"),
         },
         meta: {
           title: "聊天",
           label: true,
+          access: ACCESS_ENUM.USER,
+          keepAlive: true,
+          remarks: "这是聊天页面",
         },
       },
     ],

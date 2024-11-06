@@ -44,24 +44,26 @@ async def process_time_middleware(request: Request, call_next):
     # 记录路径参数
     path_params = request.path_params
     if path_params:
-        logger.info(f"Path Parameters: {path_params}")
+        logger.info(f"路径参数: {path_params}")
 
     # 记录请求体
-    if request.method in ["POST", "PUT", "PATCH"]:
+    if request.method in ["POST"]:
         try:
             body = await request.json()
-            logger.info(f"Request Body: {body}")
+            logger.info(f"请求正文: {body}")
         except Exception as e:
-            logger.warning(f"Failed to parse JSON body: {e}")
+            logger.warning(f"解析JSON正文失败: {e}")
 
     # 记录查询参数
     query_params = request.query_params
     if query_params:
-        logger.info(f"Query Parameters: {query_params}")
+        logger.info(f"查询参数: {query_params}")
 
     # 打印请求头信息
-    headers = dict(request.headers)
-    logger.info(f"token：{headers.get('authorization', "")} secret_key：{headers.get('login_id', "")}")
+    if request.headers:
+        headers = dict(request.headers)
+        # logger.info(f"token：{headers.get('authorization', "")} secret_key：{headers.get('login_id', "")}")
+        logger.info(f"secret_key：{headers.get('login_id', "")}")
 
     # 将Request请求传回原路由
     response = await call_next(request)
