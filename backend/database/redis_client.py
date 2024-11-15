@@ -1,6 +1,8 @@
 import json
+import os
 
 import redis
+from dotenv import load_dotenv
 from redis.exceptions import ConnectionError
 from config.logging_config import get_logger
 
@@ -13,13 +15,15 @@ class RedisClient:
         初始化 Redis 连接
         :param db: 数据库编号，默认为0
         """
-        self.host = "8.141.8.50"
-        self.password = "Miss177155"
-        self.port = 6379
-        self.db = db
+        load_dotenv()
+
+        host = os.getenv("REDIS_HOST")
+        password = os.getenv("REDIS_PASSWORD")
+        port = os.getenv("REDIS_PORT")
+        db = db
 
         try:
-            self.r = redis.Redis(host=self.host, port=self.port, db=db, password=self.password)
+            self.r = redis.Redis(host=host, port=port, db=db, password=password)
             # 测试连接是否成功
             self.r.ping()
         except ConnectionError as e:
@@ -52,12 +56,7 @@ class RedisClient:
         try:
             value = self.r.get(key)
 
-            try:
-                value = json.loads(value)
-            except:
-                pass
-
-            return value
+            return json.loads(value)
         except Exception as e:
             logger.error(f"获取值时出错: {e}")
             return None
@@ -74,18 +73,6 @@ class RedisClient:
             logger.error(f"删除键时出错: {e}")
             return None
 
-    def expire_key(self, key, time):
-        """
-        设置键的过期时间
-        :param key: 键
-        :param time: 过期时间（秒）
-        :return: 操作是否成功
-        """
-        try:
-            return self.r.expire(key, time)
-        except Exception as e:
-            logger.error(f"设置过期时间时出错: {e}")
-            return None
 
     def exists_key(self, key):
         """
@@ -108,7 +95,6 @@ class RedisClient:
             logger.info("Redis 连接已关闭")
         except Exception as e:
             logger.error(f"Redis 关闭失败：{e}")
-
 
 # 示例使用
 # if __name__ == "__main__":

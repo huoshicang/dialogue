@@ -1,3 +1,6 @@
+import os
+
+from dotenv import load_dotenv
 from starlette import status
 from starlette.responses import JSONResponse
 from config.logging_config import get_logger
@@ -14,8 +17,12 @@ logger = get_logger(__name__)
 
 async def login_routes(data, request):
     try:
+        load_dotenv()
+
         # 查询用户信息
-        find_info = MongoDBClient("users").find_data(
+        users_client = MongoDBClient("users")
+
+        find_info = users_client.find_data(
             {
                 "$or": [
                     {"username": data["account"]},
@@ -30,7 +37,9 @@ async def login_routes(data, request):
                 'is_deleted': False,
                 'password': False,
                 'updated_at': False,
+                'confirm_password': False,
             })
+        users_client.close_connection()
 
         # 用户信息不存在
         if not find_info:
@@ -49,7 +58,7 @@ async def login_routes(data, request):
         UUID = str(uuid.uuid4())
 
         # 存储登录信息
-        redis_client = RedisClient().set_key_value(UUID, find_info)
+        redis_client = RedisClient().set_key_value(UUID, find_info, os.getenv("EX", 604800))
 
         # 存储登录信息
         if not redis_client:

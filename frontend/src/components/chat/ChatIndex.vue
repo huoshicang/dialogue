@@ -48,6 +48,6 @@ const update_split = (size: string | number) => {
 .layout-demo-chat :deep(.arco-layout-footer) {
   background-color: var(--color-bg-2);
   border-top: 1px solid var(--color-border);
-  height: 128px;
+  height: 160px;
 }
 </style>

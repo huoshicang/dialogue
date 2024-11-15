@@ -14,7 +14,8 @@ logger = get_logger(__name__)
 
 async def v1_delete_chat(data):
     try:
-        chat_del_info = MongoDBClient("chats").update_data(
+        chat_clinet = MongoDBClient("chats")
+        chat_del_info = chat_clinet.update_data(
             {
                 "$and": [
                     {"_id": ObjectId(data["chat_id"])},
@@ -28,8 +29,10 @@ async def v1_delete_chat(data):
                 }
             }
         )
+        chat_clinet.close_connection()
 
-        MongoDBClient("messages").update_data(
+        message_clinet = MongoDBClient("messages")
+        message_clinet.update_data(
             {"_id": ObjectId(data["message_id"])},
             {
                 '$set': {
@@ -38,6 +41,7 @@ async def v1_delete_chat(data):
                 }
             }
         )
+        message_clinet.close_connection()
 
         if not chat_del_info:
             return JSONResponse(

@@ -1,6 +1,8 @@
+import os
 from datetime import datetime
 
 from bson import ObjectId
+from dotenv import load_dotenv
 from pymongo import MongoClient, errors
 
 from config.logging_config import get_logger
@@ -14,17 +16,19 @@ class MongoDBClient:
         初始化 MongoDB 连接
         :param collection_name: 集合名称
         """
-        username = "mongodb"
-        password = "Miss177155"
-        host = "8.141.8.50"
-        port = "27017"
+        load_dotenv()
+
+        username = os.getenv("MONGODB_USERNAME")
+        password = os.getenv("MONGODB_PASSWORD")
+        host = os.getenv("MONGODB_HOST")
+        port = os.getenv("MONGODB_PORT")
         self.uri = f"mongodb://{username}:{password}@{host}:{port}/"
 
         # 创建MongoClient实例
         self.client = MongoClient(self.uri)
 
         # 连接到数据库
-        self.db = self.client["test"]
+        self.db = self.client[os.getenv("MONGODB_DATABASE", "dialogue")]
 
         # 连接到集合
         self.collection = self.db[collection_name]
@@ -169,7 +173,6 @@ class MongoDBClient:
         """关闭 MongoDB 连接"""
         try:
             self.client.close()
-            logger.info("MongoDB 连接已关闭")
         except errors.PyMongoError as e:
             logger.error(f"MongoDB 关闭失败：{e}")
 

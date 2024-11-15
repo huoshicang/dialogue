@@ -10,7 +10,9 @@ def updata_key_usenumber(id):
     :param id: key的id
     :return: None
     """
-    MongoDBClient("keys").update_data(
+    key_client = MongoDBClient("keys")
+
+    key_client.update_data(
         {"_id": ObjectId(id)},
         {
             '$inc': {
@@ -21,3 +23,5 @@ def updata_key_usenumber(id):
             }
         }
     )
+
+    key_client.close_connection()

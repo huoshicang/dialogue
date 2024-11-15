@@ -21,8 +21,7 @@ async def profile_routes(request):
                 }
             )
 
-        token_info = verify(str(headers.get('authorization')).replace("Bearer ", ""),
-                            headers.get('login_id'))
+        token_info = verify(str(headers.get('authorization')).replace("Bearer ", ""), headers.get('login_id'))
 
         if not token_info:
             return JSONResponse(

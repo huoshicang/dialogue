@@ -10,8 +10,10 @@ logger = get_logger(__name__)
 
 async def register_routes(data):
     try:
+
+        user_client = MongoDBClient("users")
         # 查询用户是否存在
-        find_info = MongoDBClient("users").find_data(
+        find_info = user_client.find_data(
             {
                 "$or": [
                     {"username": data["username"]},
@@ -20,6 +22,7 @@ async def register_routes(data):
             },
             {'id': True}
         )
+
 
         # 用户存在
         if find_info:
@@ -44,7 +47,8 @@ async def register_routes(data):
         del data['confirm_password']
 
         # 插入数据
-        insert_info = MongoDBClient("users").insert_data_one(data)
+        insert_info = user_client.insert_data_one(data)
+        user_client.close_connection()
 
         # 插入失败
         if not insert_info:

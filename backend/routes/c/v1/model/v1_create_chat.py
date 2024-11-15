@@ -29,15 +29,18 @@ async def v1_create_chat(data):
         # 参数
         chat_parameters = data['chat_parameters']
 
-        key_find_info = MongoDBClient("keys").find_data_many_sort(
+        key_client = MongoDBClient("keys")
+        key_find_info = key_client.find_data_many_sort(
             {"is_deleted": False},
             {"key": True},
             'use_number')[0]
+        key_client.close_connection()
 
         updata_key_usenumber(str(key_find_info['_id']))
 
         # 创建消息
-        message_insert_info = MongoDBClient("messages").insert_data_one({
+        message_client = MongoDBClient("messages")
+        message_insert_info = message_client.insert_data_one({
             "model": chat_parameters['model'],
             "messages": chat_parameters['messages'],
             "top_p": chat_parameters['top_p'],
@@ -53,6 +56,7 @@ async def v1_create_chat(data):
             "enable_search": chat_parameters['enable_search'],
             "key": str(key_find_info['_id'])
         })
+        message_client.close_connection()
 
         # 判断消息是否创建成功
         if not message_insert_info:
@@ -65,13 +69,15 @@ async def v1_create_chat(data):
                 })
 
         # 创建对话
-        chat_insert_info = MongoDBClient("chats").insert_data_one({
+        chat_client = MongoDBClient("chats")
+        chat_insert_info = chat_client.insert_data_one({
             "user_id": data['user_id'],
             "user_name": data['user_name'],
             "chat_title": data['chat_title'],
             "system": data['system'],
             "message_id": message_insert_info.get("_id", None),
         })
+        chat_client.close_connection()
 
         # 判断对话是否创建完成
         if not chat_insert_info:
@@ -83,7 +89,8 @@ async def v1_create_chat(data):
                     "message": "创建对话失败",
                 })
 
-        logger.info(f"message_id: {message_insert_info.get("_id", None)}  chat_id: {chat_insert_info.get("_id", None)}, 创建成功")
+        logger.info(
+            f"message_id: {message_insert_info.get("_id", None)}  chat_id: {chat_insert_info.get("_id", None)}, 创建成功")
         return JSONResponse(
             status_code=status.HTTP_200_OK,
             content={
