@@ -5,7 +5,7 @@ dashscope.api_key = 'sk-474a56d1d43140788d925a5888cda83a'
 
 def get_response(messages):
     response = dashscope.Generation.call(
-        model="qwen-plus",
+        model="discard-qwen-plus",
         messages=messages,
         result_format='message',
     )

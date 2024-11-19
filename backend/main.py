@@ -1,9 +1,13 @@
 from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
+
+from fastapi.staticfiles import StaticFiles
+
 from config.logging_config import setup_logger, get_logger
 from starlette.requests import Request
-
+from fastapi.templating import Jinja2Templates
+from fastapi.responses import HTMLResponse
 from routes.c.v1 import c_index
 from routes.r.v1 import r_index
 from routes.d.v1 import d_index
@@ -31,11 +35,7 @@ app.add_middleware(
     allow_headers=["*"],  # 允许的头
 )
 
-
-@app.get("/")
-async def read_root(username: str = Query()):
-    logger.info("Root endpoint was called")
-    return {"Hello": "World"}
+app.mount("/", StaticFiles(directory="dist", html=True), name="vue_static")
 
 
 # 定义中间件
@@ -62,8 +62,9 @@ async def process_time_middleware(request: Request, call_next):
     # 打印请求头信息
     if request.headers:
         headers = dict(request.headers)
-        # logger.info(f"token：{headers.get('authorization', "")} secret_key：{headers.get('login_id', "")}")
-        logger.info(f"secret_key：{headers.get('login_id', "")}")
+        if headers.get('login_id', "") != "" and headers.get('authorization', "") != "":
+            logger.info(f"token：{headers.get('authorization', "")} secret_key：{headers.get('login_id', "")}")
+
 
     # 将Request请求传回原路由
     response = await call_next(request)
@@ -74,9 +75,6 @@ async def process_time_middleware(request: Request, call_next):
 
 
 if __name__ == '__main__':
-
-
-
     # 启动应用，开启热更新
     uvicorn.run(
         "main:app",

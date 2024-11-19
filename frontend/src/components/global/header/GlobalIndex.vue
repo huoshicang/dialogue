@@ -1,8 +1,11 @@
 <template>
-  <a-page-header :style="{ background: 'var(--color-bg-2)' }" show-back @back="back">
+  <a-page-header
+    :style="{ background: 'var(--color-bg-2)' }"
+    show-back
+    @back="back"
+  >
     <template #title>
       {{ user_info.username }}
-
     </template>
     <template #subtitle>
       {{ user_info.introduction }}
@@ -38,7 +41,6 @@ const dark_colors = () => {
 };
 
 const back = () => router.push("/");
-
 </script>
 
 <style scoped>

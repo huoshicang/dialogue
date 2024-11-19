@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
 from config.logging_config import get_logger
+from routes.c.v1.model.v1_create_model import v1_create_model
 from routes.c.v1.model.v1_create_chat import v1_create_chat
 
 c_v1_router = APIRouter(prefix="/v1/create", tags=["create"])
@@ -8,12 +9,13 @@ c_v1_router = APIRouter(prefix="/v1/create", tags=["create"])
 # 获取日志记录器
 logger = get_logger(__name__)
 
+
 class ChatParameters(BaseModel):
     """
     聊天参数
     """
     # 用户使用model参数指明对应的模型
-    model: str = "qwen-max"
+    model: str = "discard-qwen-max"
 
     # 用户与模型的对话历史
     messages: list = []
@@ -51,6 +53,7 @@ class ChatParameters(BaseModel):
     # 用于控制模型在生成文本时是否使用互联网搜索结果进行参考
     enable_search: bool = False
 
+
 class Chat(BaseModel):
     """
     聊天
@@ -60,6 +63,7 @@ class Chat(BaseModel):
     chat_title: str
     system: str | None
     chat_parameters: ChatParameters
+
 
 @c_v1_router.post("/chat", response_model=Chat)
 async def chat(Chat: Chat):
@@ -84,4 +88,56 @@ async def chat(Chat: Chat):
             "stream_options": Chat.chat_parameters.stream_options,
             "enable_search": Chat.chat_parameters.enable_search
         }
+    })
+
+
+class Model(BaseModel):
+    """
+    模型
+    """
+    # 用户id
+    user_id: str | int
+
+    # 用户名
+    user_name: str
+
+    # 模型地址
+    base_url: str
+
+    # 模型名称
+    Model_name: str
+
+    # 模型调用名
+    Model_call: str
+
+    # 模型介绍
+    Model_introduction: str
+
+    # 模型调用-输入 计费
+    Model_call_input: str | int | float
+
+    # 模型调用-输出 计费
+    Model_call_output: str | int | float
+
+    # 额度
+    limit: str | int
+
+    # 剩余额度
+    residue_limit: str | int
+
+
+@c_v1_router.post("/model", response_model=Model)
+async def model(model: Model):
+    """创建模型"""
+    return await v1_create_model({
+        "user_id": model.user_id,
+        "user_name": model.user_name,
+        "base_url": model.base_url,
+        "model_name": model.Model_name,
+        "model_call": model.Model_call,
+        "model_introduction": model.Model_introduction,
+        "model_call_input": model.Model_call_input,
+        "model_call_output": model.Model_call_output,
+        "limit": model.limit,
+        "residue_limit": model.residue_limit
     })

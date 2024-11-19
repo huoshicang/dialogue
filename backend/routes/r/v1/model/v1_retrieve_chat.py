@@ -17,8 +17,10 @@ async def v1_retrieve_chat(data):
     try:
         user_id = data['user_id']
 
+        chat_clone = MongoDBClient("chats")
+
         # 查找信息
-        chat_find_info = MongoDBClient("chats").find_data_many_sort(
+        chat_find_info = chat_clone.find_data_many_sort(
             {
                 "$and": [
                     {"user_id": user_id},
@@ -31,6 +33,8 @@ async def v1_retrieve_chat(data):
                 "message_id": True,
             },
             'created_at')
+
+        chat_clone.close_connection()
 
         # 判断是否获取成功
         if not isinstance(chat_find_info, list):

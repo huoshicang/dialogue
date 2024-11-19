@@ -22,7 +22,7 @@
         <a-input v-model="form.chat_title" placeholder="请输入标题" />
       </a-form-item>
 
-      <a-form-item field="system" label="预设" tooltip="请输入标题">
+      <a-form-item field="system" label="预设" tooltip="">
         <a-select v-model="form.system" placeholder="请选择预设" allow-clear>
           <a-option value="你好">你好</a-option>
           <a-option value="小红书">小红书</a-option>
@@ -39,8 +39,14 @@
           placeholder="请选择模型"
           allow-clear
         >
-          <a-option value="qwen-plus">qwen-plus</a-option>
-          <a-option value="qwen-turbo">qwen-turbo</a-option>
+          <a-option value="qwen-turbo-1101">qwen-turbo-1101</a-option>
+          <a-option value="qwen1.5-0.5b-chat">qwen1.5-0.5b-chat</a-option>
+          <a-option value="qwen1.5-1.8b-chat">qwen1.5-1.8b-chat</a-option>
+          <a-option value="qwen2.5-math-1.5b-instruct">qwen2.5-math-1.5b-instruct</a-option>
+          <a-option value="qwen2.5-3b-instruct">qwen2.5-3b-instruct</a-option>
+          <a-option value="qwen2.5-1.5b-instruct">qwen2.5-1.5b-instruct</a-option>
+          <a-option value="qwen2.5-0.5b-instruct">qwen2.5-0.5b-instruct</a-option>
+          <a-option value="qwen-coder-plus-1106">qwen-coder-plus-1106</a-option>
         </a-select>
       </a-form-item>
 
@@ -104,7 +110,7 @@ const form = reactive({
   chat_title: "",
   system: "",
   chat_parameters: {
-    model: "qwen-plus",
+    model: "",
     messages: [],
     top_p: 0.7,
     temperature: 0.7,

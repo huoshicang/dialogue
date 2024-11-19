@@ -32,6 +32,9 @@ router.beforeEach(async (to, from, next): Promise<void> => {
 
   const needAccess = to.meta?.access ?? ACCESS_ENUM.LOGIN;
 
+  console.log("Settings", Settings);
+
+
   if (needAccess !== ACCESS_ENUM.NOT_LOGIN) {
     //  // 如果没登录 就跳转到登录
     if (

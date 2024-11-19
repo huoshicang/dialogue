@@ -10,10 +10,10 @@
     </a-layout-sider>
     <a-layout>
       <a-layout-content>
-        <ChatContent />
+          <ChatContent :footerHeight="footerHeight"  />
       </a-layout-content>
-      <a-layout-footer>
-        <ChatFooter />
+      <a-layout-footer  >
+        <ChatFooter  @update-height="handleUpdateFooterHeight" />
       </a-layout-footer>
     </a-layout>
   </a-layout>
@@ -27,11 +27,13 @@ import ChatContent from "./content/ChatContent.vue";
 import ChatFooter from "./footer/ChatFooter.vue";
 import { ref } from "vue";
 
-const split = ref<string | number>(0.8);
+const footerHeight = ref(0);
 
-const update_split = (size: string | number) => {
-  split.value = size;
+const handleUpdateFooterHeight = (height) => {
+  // console.log(height);
+  footerHeight.value = height;
 };
+
 </script>
 
 <style scoped>
@@ -41,13 +43,11 @@ const update_split = (size: string | number) => {
 }
 
 .layout-demo-chat :deep(.arco-layout-content) {
-  padding: 48px 48px 90px 48px;
-  flex: 1;
 }
 
 .layout-demo-chat :deep(.arco-layout-footer) {
   background-color: var(--color-bg-2);
   border-top: 1px solid var(--color-border);
-  height: 160px;
+  max-height: 160px;
 }
 </style>

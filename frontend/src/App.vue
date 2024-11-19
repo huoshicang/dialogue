@@ -1,34 +1,33 @@
 <template>
-  <a-layout class="layout-demo-app">
-    <a-layout-header>
-      <GlobalHeader />
-    </a-layout-header>
-    <a-layout-content>
-      <a-config-provider :locale="zhCN">
-        <router-view name="app_view" v-slot="{ Component }">
-          <transition name="fade">
-            <keep-alive>
-              <component :is="Component" />
-            </keep-alive>
-          </transition>
-        </router-view>
-      </a-config-provider>
-    </a-layout-content>
-  </a-layout>
+  <a-config-provider :locale="zhCN">
+<!--    <n-config-provider :theme="theme">-->
+      <router-view name="app_view" v-slot="{ Component }">
+        <transition name="fade">
+          <keep-alive>
+            <component :is="Component" />
+          </keep-alive>
+        </transition>
+      </router-view>
+<!--    </n-config-provider>-->
+  </a-config-provider>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import zhCN from "@arco-design/web-vue/es/locale/lang/zh-cn";
-import GlobalHeader from "@/components/global/header/GlobalIndex.vue";
-// import { useRouter } from "vue-router";
-// import { onMounted } from "vue";
+import { darkTheme } from 'naive-ui'
+import type { GlobalTheme } from 'naive-ui'
+import { useRouter } from "vue-router";
+import { onMounted, ref } from "vue";
 
-// const router = useRouter();
+const router = useRouter();
 
-// onMounted(() => router.push({ path: "/chat" }));
+const theme = ref<GlobalTheme | null>(darkTheme)
+
+
+onMounted(() => router.push({ path: "/chat" }));
 </script>
 <style scoped>
-.layout-demo-app{
+.layout-demo-app {
   height: 100vh;
 }
 
@@ -37,7 +36,6 @@ import GlobalHeader from "@/components/global/header/GlobalIndex.vue";
 }
 
 .layout-demo-app :deep(.arco-layout-content) {
-  display: flex;
   justify-content: center;
   align-items: center;
   background-color: var(--color-bg-1);

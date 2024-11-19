@@ -4,7 +4,6 @@ from fastapi.responses import JSONResponse
 
 from config.logging_config import get_logger
 from database.mongo import MongoDBClient
-from utils.hash_password import hash_password
 
 logger = get_logger(__name__)
 
@@ -18,8 +17,10 @@ async def v1_retrieve_message(data):
     try:
         message_id = data['message_id']
 
+        chat_clone =  MongoDBClient("messages")
+
         # 查找信息
-        chat_find_info = MongoDBClient("messages").find_data(
+        chat_find_info = chat_clone.find_data(
             {
                 "$and": [
                     {"_id": ObjectId(message_id)},
@@ -31,6 +32,7 @@ async def v1_retrieve_message(data):
                 "updated_at": False,
                 "is_deleted": False,
             })
+        chat_clone.close_connection()
 
         if not chat_find_info:
             logger.error(f"{data['message_id']} 获取消息失败")

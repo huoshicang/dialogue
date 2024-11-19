@@ -104,7 +104,7 @@ const handleSubmit = async ({
 
       if (res.status_code === 200) {
         Message.success(res.data.message);
-        await router.push({ path: "/chat" });
+        await router.push({ path: "/" });
       } else {
         Message.error(res.message);
       }
