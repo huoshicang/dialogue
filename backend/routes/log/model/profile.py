@@ -54,9 +54,6 @@ async def profile_routes(request):
             },
         )
 
-
-
-
     except Exception as e:
         logger.error(e)
         return JSONResponse(

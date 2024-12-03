@@ -1,0 +1,79 @@
+{
+  "name": "frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
+  },
+  "dependencies": {
+    "buffer": "^6.0.3",
+    "core-js": "^3.8.3",
+    "crypto-browserify": "^3.12.0",
+    "jsonwebtoken": "^9.0.2",
+    "marked": "^15.0.3",
+    "pinia-plugin-persistedstate": "^3.2.1",
+    "process": "^0.11.10",
+    "stream-browserify": "^3.0.0",
+    "util": "^0.12.5",
+    "vm-browserify": "^1.1.2",
+    "vue": "^3.5.4",
+    "vue-router": "^4.0.3"
+  },
+  "devDependencies": {
+    "@arco-design/web-vue": "^2.56.0",
+    "@types/axios": "^0.14.0",
+    "@types/jsonwebtoken": "^9.0.6",
+    "@vicons/ionicons5": "^0.12.0",
+    "@vue/cli-plugin-babel": "~5.0.0",
+    "@vue/cli-plugin-eslint": "~5.0.0",
+    "@vue/cli-plugin-router": "~5.0.0",
+    "@vue/cli-plugin-typescript": "~5.0.0",
+    "@vue/cli-service": "~5.0.0",
+    "@vue/eslint-config-typescript": "~13.0.0",
+    "axios": "^1.7.4",
+    "eslint": "^8.57.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "eslint-plugin-vue": "^9.27.0",
+    "less": "^4.2.0",
+    "less-loader": "^12.2.0",
+    "naive-ui": "^2.40.0",
+    "pinia": "^2.2.2",
+    "prettier": "^3.3.3",
+    "typescript": "^5.5.4"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/recommended",
+      "eslint:recommended",
+      "@vue/typescript/recommended",
+      "plugin:prettier/recommended"
+    ],
+    "parserOptions": {
+      "ecmaVersion": 2020
+    },
+    "plugins": [
+      "prettier"
+    ],
+    "rules": {
+      "prettier/prettier": "error"
+    }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead",
+    "not ie 11"
+  ],
+  "gitHooks": {
+    "pre-commit": "lint-staged"
+  },
+  "lint-staged": {
+    "*.{js,jsx,vue,ts,tsx}": "vue-cli-service lint"
+  }
+}

@@ -90,6 +90,7 @@ async def login_routes(data, request):
                 },
             },
             headers={
+                "x-requested-url": "login",
                 "Authorization": f"Bearer {sign({
                     "UUID": UUID
                 }, secret_key, )}",

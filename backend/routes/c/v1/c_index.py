@@ -1,6 +1,9 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, WebSocket
 from pydantic import BaseModel
+
 from config.logging_config import get_logger
+from routes.c.v1.model.v1_create_key import v1_create_key
+from routes.c.v1.model.v1_create_message import v1_create_message
 from routes.c.v1.model.v1_create_model import v1_create_model
 from routes.c.v1.model.v1_create_chat import v1_create_chat
 
@@ -15,7 +18,7 @@ class ChatParameters(BaseModel):
     聊天参数
     """
     # 用户使用model参数指明对应的模型
-    model: str = "discard-qwen-max"
+    model: str
 
     # 用户与模型的对话历史
     messages: list = []
@@ -110,6 +113,9 @@ class Model(BaseModel):
     # 模型调用名
     Model_call: str
 
+    # 模型标签
+    Model_tag: list[str]
+
     # 模型介绍
     Model_introduction: str
 
@@ -136,8 +142,47 @@ async def model(model: Model):
         "model_name": model.Model_name,
         "model_call": model.Model_call,
         "model_introduction": model.Model_introduction,
+        "model_tag": model.Model_tag,
         "model_call_input": model.Model_call_input,
         "model_call_output": model.Model_call_output,
         "limit": model.limit,
         "residue_limit": model.residue_limit
+    })
+
+class Key(BaseModel):
+    """
+    模型
+    """
+    # 用户id
+    user_id: str | int
+
+    # 用户名
+    user_name: str
+
+    # 密钥
+    key: str
+
+    # 密钥说明
+    key_introduction: str
+
+    # 可用模型
+    availableModels: list[str]
+
+    # 额度
+    limit: str | int
+
+    # 剩余额度
+    residue_limit: str | int
+
+@c_v1_router.post("/key", response_model=Key)
+async def model(key: Key):
+    """创建模型"""
+    return await v1_create_key({
+        "user_id": key.user_id,
+        "user_name": key.user_name,
+        "key": key.key,
+        "key_introduction": key.key_introduction,
+        "availableModels": key.availableModels,
+        "limit": key.limit,
+        "residue_limit": key.residue_limit
     })

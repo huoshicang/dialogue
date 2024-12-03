@@ -7,7 +7,6 @@ from fastapi.responses import JSONResponse
 from config.logging_config import get_logger
 from database.mongo import MongoDBClient
 from utils.hash_password import hash_password
-from utils.updata_key_usenumber import updata_key_usenumber
 
 logger = get_logger(__name__)
 

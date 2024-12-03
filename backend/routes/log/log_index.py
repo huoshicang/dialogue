@@ -6,7 +6,7 @@ from routes.log.model.login import login_routes
 from routes.log.model.profile import profile_routes
 from routes.log.model.register import register_routes
 
-log_router = APIRouter(prefix="", tags=["log"],)
+log_router = APIRouter(prefix="/log", tags=["log"],)
 
 # 获取日志记录器
 logger = get_logger(__name__)

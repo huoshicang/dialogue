@@ -1,3 +1,5 @@
+import os
+
 from fastapi import status
 from fastapi.responses import JSONResponse
 
@@ -42,8 +44,11 @@ async def register_routes(data):
             "phone": "",
             "avatar": "",
             "role": "user",
+            'charging': True,
+            "limit": int(os.getenv("INIT_LIMIT", 100000))
         })
 
+        # 删除确认密码
         del data['confirm_password']
 
         # 插入数据

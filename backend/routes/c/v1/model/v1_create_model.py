@@ -13,24 +13,8 @@ async def v1_create_model(data):
         # 模型查询
         model_client = MongoDBClient("models")
 
-        # 模型查询
-        model_find_info = model_client.find_data_many_sort(
-            {"is_deleted": False},
-            {
-                "model_name": data['model_name'],
-                "model_call": data['model_call']
-            })
-
-        # 如果模型已存在
-        if model_find_info:
-            logger.warning(f"模型已存在：{data['model_call']}")
-            return JSONResponse(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                content={
-                    "status_code": status.HTTP_400_BAD_REQUEST,
-                    "message": "模型已存在",
-                })
-
+        data['enable'] = True
+        data['charging'] = True
         # 模型插入
         model_insert_info = model_client.insert_data_one(data)
 
@@ -38,20 +22,20 @@ async def v1_create_model(data):
 
         # 插入失败
         if not model_insert_info:
-            logger.warning(f"模型插入失败：{data['model_call']}")
+            logger.warning(f"模型插入失败")
             return JSONResponse(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 content={
                     "status_code": status.HTTP_400_BAD_REQUEST,
-                    "message": "模型插入失败",
+                    "message": "模型创建失败",
                 })
 
-        logger.warning(f"模型插入成功：{data['model_call']}")
+        logger.warning(f"模型创建成功")
         return JSONResponse(
             status_code=status.HTTP_200_OK,
             content={
                 "status_code": status.HTTP_200_OK,
-                "message": "执行成功",
+                "message": "创建成功",
             })
 
 

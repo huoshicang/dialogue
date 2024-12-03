@@ -4,7 +4,6 @@ from fastapi.responses import JSONResponse
 from config.logging_config import get_logger
 from database.mongo import MongoDBClient
 from utils.hash_password import hash_password
-from utils.updata_key_usenumber import updata_key_usenumber
 
 logger = get_logger(__name__)
 
@@ -18,7 +17,7 @@ logger = get_logger(__name__)
 async def v1_create_chat(data):
     try:
         # 构建消息
-        if data['system'] is not None:
+        if data['system'] != "":
             data['chat_parameters']['messages'] = [
                 {
                     "role": "system",
@@ -31,12 +30,15 @@ async def v1_create_chat(data):
 
         key_client = MongoDBClient("keys")
         key_find_info = key_client.find_data_many_sort(
-            {"is_deleted": False},
+            {
+                "is_deleted": False,
+                "availableModels": {
+                    "$in": [chat_parameters['model']]
+                }
+            },
             {"key": True},
-            'use_number')[0]
+            'residue_limit')[0]
         key_client.close_connection()
-
-        updata_key_usenumber(str(key_find_info['_id']))
 
         # 创建消息
         message_client = MongoDBClient("messages")

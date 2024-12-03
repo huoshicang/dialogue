@@ -19,3 +19,5 @@ def verify(token, secret_key):
 
 def sign(payload, secretKey):
     return jwt.encode(payload, secretKey, algorithm='HS256')
+
+
