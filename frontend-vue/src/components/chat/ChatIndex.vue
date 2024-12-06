@@ -35,7 +35,7 @@ import { Message } from "@arco-design/web-vue";
 const UserStore = useUserStore();
 const route = useRoute();
 const router = useRouter();
-const sendLoding = ref(false)
+const sendLoding = ref(false);
 const chatId = ref<string | undefined | null>(null);
 const messageList = ref([]);
 
@@ -59,8 +59,11 @@ const getMessage = async (id) => {
 
 const sendMessage = (sendMessage) => {
   sendLoding.value = true;
-  const socket = new WebSocket(`ws:/${window.location.host}${process.env.VUE_APP_WS_BALEURL}`);
-  let messageListIndex = null
+  const protocol = window.location.protocol === "https:" ? "wss" : "ws";
+  const socket = new WebSocket(
+    `${protocol}://${process.env.VUE_APP_BALEURL.replace(`${window.location.protocol}//`, "")}${process.env.VUE_APP_WS_BALEURL}`,
+  );
+  let messageListIndex = null;
 
   socket.onopen = function () {
     messageList.value.push({
@@ -73,26 +76,29 @@ const sendMessage = (sendMessage) => {
     });
     messageListIndex = messageList.value.length - 1;
     // 发送初始消息或参数
-    socket.send(JSON.stringify({
-      chatId: chatId.value,
-      userId: UserStore.gettersUserInfo._id,
-      sendMessage: sendMessage
-    }));
+    socket.send(
+      JSON.stringify({
+        chatId: chatId.value,
+        userId: UserStore.gettersUserInfo._id,
+        sendMessage: sendMessage,
+      }),
+    );
   };
 
-  socket.onmessage = function(event) {
-    if (event.data) messageList.value[messageListIndex]['content'] += event.data;
+  socket.onmessage = function (event) {
+    if (event.data)
+      messageList.value[messageListIndex]["content"] += event.data;
   };
 
   socket.onerror = function (error) {
-    messageList.value[messageListIndex]['content'] = error;
+    messageList.value[messageListIndex]["content"] = error;
     sendLoding.value = false;
   };
 
   socket.onclose = function () {
     console.log("WebSocket连接已关闭");
     sendLoding.value = false;
-  }
+  };
 };
 
 watch(() => route.params.id, getMessage, { immediate: true });

@@ -18,13 +18,8 @@
         />
       </a-layout-content>
       <a-layout-sider>
-        <n-button-group vertical v-show="text">
-          <a-button v-show="text.length > 400">
-            <template #icon>
-              <icon-expand />
-            </template>
-          </a-button>
-          <a-button :loading="props.sendLoding">
+        <n-button-group vertical>
+          <a-button :loading="props.sendLoding" type="outline">
             <template #icon>
               <icon-send @click="sendMessageFooter" />
             </template>
@@ -47,10 +42,13 @@ const props = defineProps({
   },
 });
 
-const text = ref("");
+// 输入框文本
+const text = ref<string>("");
 
+// 父组件触发事件 发送消息
 const emit = defineEmits(["sendMessage"]);
 
+// 发送消息
 const sendMessageFooter = () => {
   emit("sendMessage", text.value);
   text.value = "";

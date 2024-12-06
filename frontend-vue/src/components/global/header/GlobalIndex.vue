@@ -5,14 +5,14 @@
     @back="back"
   >
     <template #title>
-      <span @click="setVisible(true)" style="cursor: pointer">{{
-        user_info.username
-      }}</span>
+      <span @click="setVisible(true)" style="cursor: pointer">
+        {{ user_info.username }}
+      </span>
     </template>
     <template #subtitle>
       {{ user_info.introduction }}
       <a-breadcrumb>
-        <a-breadcrumb-item>v1.0.0</a-breadcrumb-item>
+        <a-breadcrumb-item>v1.1.0</a-breadcrumb-item>
       </a-breadcrumb>
     </template>
     <template #extra>

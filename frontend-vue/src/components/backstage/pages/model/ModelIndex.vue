@@ -71,6 +71,7 @@ import { useUserStore } from "@/store";
 import { useRouter } from "vue-router";
 import { Api } from "@/api/api";
 import { Message } from "@arco-design/web-vue";
+import { get_model_table_type } from "@/types/Response/ApiTypes";
 
 const router = useRouter();
 const user_info = useUserStore().user_info;
@@ -231,7 +232,7 @@ const setModelInfo = (data: ModelInfo): void => {
 // 请求数据
 const requestData = async () => {
   try {
-    const res = await Api.get_model_table({
+    const res = await Api.get_model_table<get_model_table_type>({
       user_id: user_info._id,
       user_name: user_info.username,
       user_role: user_info.role,

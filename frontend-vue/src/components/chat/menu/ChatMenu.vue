@@ -49,6 +49,7 @@ import { Api } from "@/api/api";
 import { useUserStore } from "@/store";
 import router from "@/router";
 import { useRoute, useRouter } from "vue-router";
+import { get_chat_list_type } from "@/types/Response/ApiTypes";
 // 用户信息
 const user_info = useUserStore().user_info;
 const menuSelected = ref<string[]>(["1"]);
@@ -71,7 +72,7 @@ const onClickMenuItem = (key: string) => router.push(`/chat/${key}`);
 // 请求数据
 const getData = async () => {
   try {
-    const res = await Api.get_chat_list({
+    const res = await Api.get_chat_list<get_chat_list_type>({
       user_id: user_info._id,
     });
 

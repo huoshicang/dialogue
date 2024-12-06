@@ -6,8 +6,8 @@
           <MarkdownRenderer :markdown="item" />
         </template>
         <template #avatar>
-          <a-avatar shape="square">
-            <IconUser v-if="item.role === 'user'" />
+          <a-avatar shape="square" :style="item.role === 'user' ? { backgroundColor: '#3370ff' } : {}">
+            <IconUser  v-if="item.role === 'user'" />
             <IconRobot v-if="item.role === 'assistant'" />
           </a-avatar>
         </template>

@@ -1,9 +1,5 @@
 // 定义一个函数，用于生成随机字符串
 export const generateRandomString = (length = 6): string => {
-  if (localStorage.getItem("login_id")) {
-    return localStorage.getItem("login_id") as string;
-  }
-
   let result = "";
   const characters =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";

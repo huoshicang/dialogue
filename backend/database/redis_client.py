@@ -85,6 +85,19 @@ class RedisClient:
             logger.error(f"检查键是否存在时出错: {e}")
             return None
 
+    def rename_key(self, old_key, new_key):
+        """
+        重命名键
+        :param old_key: 旧键名
+        :param new_key: 新键名
+        :return: 操作是否成功
+        """
+        try:
+            return self.r.rename(old_key, new_key)
+        except Exception as e:
+            logger.error(f"重命名键时出错: {e}")
+            return False
+
     def close_connection(self):
         """
         关闭 Redis 连接

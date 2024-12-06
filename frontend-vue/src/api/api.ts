@@ -1,5 +1,6 @@
 import { my_post, my_get } from "./MyAxios";
 import { login_type, register_type } from "@/types/login/LogType";
+import { add_chat_type, get_chat_list_type, get_model_table_type } from "@/types/Response/ApiTypes";
 
 export const Api = {
   // 注册
@@ -16,11 +17,11 @@ export const Api = {
   },
 
   // 获取聊天
-  get_chat_list: async (data: any): Promise<any> => {
+  get_chat_list: async (data: get_chat_list_type): Promise<any> => {
     return await my_get("/v1/retrieve/chat", data);
   },
   // 添加聊天
-  add_chat: async (data: object): Promise<any> => {
+  add_chat: async (data: add_chat_type): Promise<any> => {
     return await my_post("/v1/create/chat", data);
   },
   // 删除聊天
@@ -29,7 +30,7 @@ export const Api = {
   },
 
   // 获取模型表格
-  get_model_table: async (data: object): Promise<any> => {
+  get_model_table: async (data: get_model_table_type): Promise<any> => {
     return await my_post("/v1/retrieve/model", data);
   },
 

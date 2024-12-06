@@ -57,7 +57,9 @@ async def login_routes(data, request):
         UUID = str(uuid.uuid4()).replace("-", "").upper()
 
         # 存储登录信息
-        redis_client = RedisClient().set_key_value(UUID, find_info, os.getenv("EX", 604800))
+        redis_client = RedisClient()
+        redis_client.set_key_value(UUID, find_info, os.getenv("EX", 604800))
+        redis_client.close_connection()
 
         # 存储登录信息
         if not redis_client:

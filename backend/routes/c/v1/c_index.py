@@ -3,7 +3,6 @@ from pydantic import BaseModel
 
 from config.logging_config import get_logger
 from routes.c.v1.model.v1_create_key import v1_create_key
-from routes.c.v1.model.v1_create_message import v1_create_message
 from routes.c.v1.model.v1_create_model import v1_create_model
 from routes.c.v1.model.v1_create_chat import v1_create_chat
 

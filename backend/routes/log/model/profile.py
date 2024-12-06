@@ -1,3 +1,6 @@
+import os
+import uuid
+
 from starlette import status
 from starlette.responses import JSONResponse
 from config.logging_config import get_logger
@@ -47,6 +50,11 @@ async def profile_routes(request):
                 }
             )
 
+        # UUID = str(uuid.uuid4()).replace("-", "").upper()
+        # redis_client = RedisClient()
+        # redis_client.rename_key(session_id, UUID)
+        # redis_client.close_connection()
+
         return JSONResponse(
             status_code=status.HTTP_200_OK,
             content={
@@ -54,6 +62,9 @@ async def profile_routes(request):
                 "data": redis_client,
                 "message": "获取成功",
             },
+            # headers={
+            #     "Set-Cookie": f"sessionId={UUID}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age={int(os.getenv("EX", 604800))}"
+            # },
         )
 
     except Exception as e:

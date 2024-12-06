@@ -22,8 +22,6 @@ async def websocket_endpoint(websocket: WebSocket):
     # 通过用户id 聊天id 获取消息id，然后获取消息内容
     messageInfo = getMessage(data)
 
-    print("messageInfo", messageInfo)
-
     # 构建 message
     messageInfo['messages'].append({
         "role": "user",
@@ -33,8 +31,6 @@ async def websocket_endpoint(websocket: WebSocket):
     # 通过消息内容中的key和model，获取真实key
     ketInfo = getKey(messageInfo['key'], messageInfo['model'])
 
-    print("ketInfo", ketInfo)
-
     if not ketInfo:
         await websocket.send_text("key发生错误，请联系管理员")
         return
@@ -42,14 +38,11 @@ async def websocket_endpoint(websocket: WebSocket):
     # 通过消息中的model，获取base_url
     base_url = getBaseUrl(messageInfo['model'])
 
-    print("base_url", base_url)
-
     if not base_url:
         await websocket.send_text("model发生错误，请联系管理员")
         return
 
     completion, completionSigns = getAssistant(ketInfo, base_url, messageInfo)
-    print("completion", completion, completionSigns)
     assistantContentInfo = None
 
     # 获取错误信息

@@ -8,10 +8,13 @@ export interface UserState {
   email?: string;
   introduction?: string;
   phone?: string;
-  registrationDate?: string;
-  accountId?: string;
+  created_at?: string;
+  updated_at?: string;
+  limit?: number;
+  charging?: string;
   certification?: number;
   role: RoleType;
+
 }
 
 export interface ModelState {

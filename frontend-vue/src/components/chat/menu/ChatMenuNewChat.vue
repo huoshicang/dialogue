@@ -98,6 +98,7 @@ import { onMounted, reactive, ref, watch } from "vue";
 import { useUserStore } from "@/store";
 import { Api } from "@/api/api";
 import { Message } from "@arco-design/web-vue";
+import { add_chat_type } from "@/types/Response/ApiTypes";
 
 const UserStore = useUserStore();
 const props = defineProps(["getData"]);
@@ -169,7 +170,7 @@ const handleOk = async () => {
   if (form.chat_title === "") form.chat_title = "新的聊天";
 
   try {
-    const res = await Api.add_chat(form);
+    const res = await Api.add_chat<add_chat_type>(form);
 
     if (res.status_code === 200) {
       Message.success(res.data.message);
