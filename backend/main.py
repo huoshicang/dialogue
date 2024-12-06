@@ -29,20 +29,16 @@ app.include_router(u_index.u_v1_router)
 # 获取日志记录器
 logger = get_logger(__name__)
 
-
-
-
-
 # 跨域
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:8080"],  # 允许的源
+    allow_origins=["*"],  # 允许的源
     allow_credentials=True,
     allow_methods=["*"],  # 允许的方法，如 GET, POST 等
     allow_headers=["*"],  # 允许的头
 )
 
-app.mount("/", StaticFiles(directory="dist", html=True), name="vue_static")
+# app.mount("/", StaticFiles(directory="dist", html=True), name="vue_static")
 
 @app.get("/")
 async def catch_all(request: Request):
@@ -70,10 +66,8 @@ async def process_time_middleware(request: Request, call_next):
         logger.info(f"查询参数: {query_params}")
 
     # 打印请求头信息
-    if request.headers:
-        headers = dict(request.headers)
-        if headers.get('login_id', "") != "" and headers.get('authorization', "") != "":
-            logger.info(f"token：{headers.get('authorization', "")} secret_key：{headers.get('login_id', "")}")
+    if request.headers.get('cookie'):
+        logger.info(request.headers.get('cookie'))
 
     # 将Request请求传回原路由
     response = await call_next(request)
@@ -84,6 +78,8 @@ async def process_time_middleware(request: Request, call_next):
 
 
 if __name__ == '__main__':
+    for route in app.routes:
+        print(f"Path: {route}")
     # 启动应用，开启热更新
     uvicorn.run(
         "main:app",

@@ -9,32 +9,34 @@ logger = get_logger(__name__)
 
 async def profile_routes(request):
     try:
-        headers = request.headers
+        cookie = request.headers.get('cookie', '')
+        session_id = None
 
-        if not headers.get('authorization') and not headers.get('login_id'):
-            logger.error(f"token：{headers.get('authorization', "")} secret_key：{headers.get('login_id', "")}")
+        # 解析Cookie头部以查找sessionId
+        if not cookie:
+            logger.error(f"登录失效")
             return JSONResponse(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 content={
                     "status_code": status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    "message": "获取失败",
+                    "message": "登录失效",
                 }
             )
 
-        token_info = verify(str(headers.get('authorization')).replace("Bearer ", ""), headers.get('login_id'))
+        cookies = {key.strip(): value.strip() for key, value in (item.split("=", 1) for item in cookie.split(";"))}
+        session_id = cookies.get('sessionId')
 
-        if not token_info:
+        if not session_id:
+            logger.error(f"会话失效")
             return JSONResponse(
-                status_code=status.HTTP_401_UNAUTHORIZED,
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 content={
-                    "status_code": status.HTTP_401_UNAUTHORIZED,
-                    "message": "获取失败",
+                    "status_code": status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    "message": "会话失效",
                 }
             )
 
-        UUID = token_info['UUID']
-
-        redis_client = RedisClient().get_value(UUID)
+        redis_client = RedisClient().get_value(session_id)
 
         if not redis_client:
             return JSONResponse(

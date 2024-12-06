@@ -1,5 +1,8 @@
 from openai import OpenAI
 
+from config.logging_config import get_logger
+
+logger = get_logger(__name__)
 
 def getAssistant(ketInfo, base_url, messageInfo):
     """
@@ -9,11 +12,17 @@ def getAssistant(ketInfo, base_url, messageInfo):
     :param messageInfo:
     :return: completion
     """
+
+    print(ketInfo, base_url, messageInfo)
+
     try:
         client = OpenAI(
             api_key=ketInfo['key'],
             base_url=base_url['base_url'],
         )
+
+        print(client)
+
         completion = client.chat.completions.create(
             model=messageInfo['model'],
             messages=messageInfo['messages'],
@@ -25,4 +34,5 @@ def getAssistant(ketInfo, base_url, messageInfo):
 
         return completion, True
     except Exception as e:
+        logger.error(e)
         return e, False

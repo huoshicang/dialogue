@@ -51,7 +51,6 @@ const getMessage = async (id) => {
     if (res.status_code === 200) {
       Message.success(res.message);
       messageList.value = res.data.messages;
-      console.log(res.data.messages);
     } else Message.error(res.message);
   } catch (err) {
     console.log("获取失败");
@@ -60,11 +59,10 @@ const getMessage = async (id) => {
 
 const sendMessage = (sendMessage) => {
   sendLoding.value = true;
-  const socket = new WebSocket(`ws://localhost:8000/message`);
+  const socket = new WebSocket(`ws:/${window.location.host}${process.env.VUE_APP_WS_BALEURL}`);
   let messageListIndex = null
 
   socket.onopen = function () {
-    console.log("WebSocket连接已打开");
     messageList.value.push({
       content: sendMessage,
       role: "user",

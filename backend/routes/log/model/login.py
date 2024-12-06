@@ -36,7 +36,6 @@ async def login_routes(data, request):
             {
                 'is_deleted': False,
                 'password': False,
-                'updated_at': False,
                 'confirm_password': False,
             })
         users_client.close_connection()
@@ -55,7 +54,7 @@ async def login_routes(data, request):
         find_info['_id'] = str(find_info['_id'])
 
         # 创建信息键
-        UUID = str(uuid.uuid4())
+        UUID = str(uuid.uuid4()).replace("-", "").upper()
 
         # 存储登录信息
         redis_client = RedisClient().set_key_value(UUID, find_info, os.getenv("EX", 604800))
@@ -72,13 +71,6 @@ async def login_routes(data, request):
 
         logger.info(f"{data["account"]} 登录成功")
 
-        # 生成加密盐
-        if request.headers.get('login_id'):
-            secret_key = request.headers.get('login_id')
-        else:
-            #  如果不存在就后端生成
-            secret_key = generate_random_string()
-
         # 返回数据
         return JSONResponse(
             status_code=status.HTTP_200_OK,
@@ -91,10 +83,7 @@ async def login_routes(data, request):
             },
             headers={
                 "x-requested-url": "login",
-                "Authorization": f"Bearer {sign({
-                    "UUID": UUID
-                }, secret_key, )}",
-                "login_id": secret_key,
+                "Set-Cookie": f"sessionId={UUID}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age={int(os.getenv("EX", 604800))}"
             },
         )
 

@@ -21,8 +21,6 @@ const router = useRouter();
 
 const theme = ref<GlobalTheme | null>(darkTheme)
 
-
-// onMounted(() => router.push({ path: "/chat" }));
 </script>
 <style scoped>
 .layout-demo-app {

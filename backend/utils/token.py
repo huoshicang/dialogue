@@ -6,6 +6,8 @@ logger = get_logger(__name__)
 
 
 def verify(token, secret_key):
+    print("verify", token, secret_key)
+
     try:
         # 验证JWT
         return jwt.decode(token, secret_key, algorithms=['HS256'])

@@ -1,16 +1,14 @@
 <template>
-  <a-list :max-height="computedHeight" scrollbar :bordered="false"
+  <a-list :max-height="computedHeight" scrollbar :bordered="false">
     <a-list-item v-for="(item, index) in props.messageList" :key="index">
-      <a-list-item-meta :title="item.role ? item.role : item['choices'][0]['delta']['role']" >
+      <a-list-item-meta :title="item.role">
         <template #description>
-            <MarkdownRenderer :markdown="item" />
+          <MarkdownRenderer :markdown="item" />
         </template>
         <template #avatar>
           <a-avatar shape="square">
-            <img
-              alt="avatar"
-              src="https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/3ee5f13fb09879ecb5185e440cef6eb9.png~tplv-uwbnlip3yd-webp.webp"
-            />
+            <IconUser v-if="item.role === 'user'" />
+            <IconRobot v-if="item.role === 'assistant'" />
           </a-avatar>
         </template>
       </a-list-item-meta>
@@ -24,6 +22,7 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, defineProps, ref } from "vue";
 import MarkdownRenderer from "@/components/chat/content/MarkdownRenderer.vue";
+import { IconUser, IconRobot } from "@arco-design/web-vue/es/icon";
 
 const props = defineProps({
   messageList: {
