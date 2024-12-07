@@ -59,7 +59,7 @@ const getMessage = async (id) => {
 
 const sendMessage = (sendMessage) => {
   sendLoding.value = true;
-  const host = process.env.VUE_APP_WS_BALEURL === "/dialogue/message" ? process.env.VUE_APP_BALEURL.replace(`${window.location.protocol}//`, "") : window.location.host;
+  const host = process.env.VUE_APP_WS_BALEURL 1== "/dialogue/message" ? process.env.VUE_APP_BALEURL.replace(`${window.location.protocol}//`, "") : window.location.host;
 
   const protocol = window.location.protocol === "https:" ? "wss" : "ws";
   const socket = new WebSocket(
