@@ -2,8 +2,10 @@ from fastapi import WebSocket, APIRouter
 import asyncio
 import json
 from openai_model.utile import *
+from openai_model.utile.getUserInfo import getUserInfo
 
 send_message = APIRouter()
+
 
 @send_message.websocket("/message")
 async def websocket_endpoint(websocket: WebSocket):
@@ -19,6 +21,12 @@ async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     data = json.loads(await websocket.receive_text())
 
+    userInfo = getUserInfo(data['userId'])
+    if not userInfo:
+        await websocket.send_text("用户无额度，请联系管理员")
+        await websocket.close()
+        return
+
     # 通过用户id 聊天id 获取消息id，然后获取消息内容
     messageInfo = getMessage(data)
 
@@ -30,16 +38,16 @@ async def websocket_endpoint(websocket: WebSocket):
 
     # 通过消息内容中的key和model，获取真实key
     ketInfo = getKey(messageInfo['key'], messageInfo['model'])
-
     if not ketInfo:
         await websocket.send_text("key发生错误，请联系管理员")
+        await websocket.close()
         return
 
     # 通过消息中的model，获取base_url
     base_url = getBaseUrl(messageInfo['model'])
-
     if not base_url:
         await websocket.send_text("model发生错误，请联系管理员")
+        await websocket.close()
         return
 
     completion, completionSigns = getAssistant(ketInfo, base_url, messageInfo)
@@ -73,20 +81,19 @@ async def websocket_endpoint(websocket: WebSocket):
             "role": "user",
             "content": data['sendMessage']
         }, {
-            "role": "assistant",
-            "content": assistantContentInfo['choices'][0]['delta']['content']
-        })
+                          "role": "assistant",
+                          "content": assistantContentInfo['choices'][0]['delta']['content']
+                      })
 
-        # todo 更新用户的额度
-        userCharging = updateUserLimit(data, assistantContentInfo['usage']['total_tokens'])
 
-        # todo 更新key的额度
-        if userCharging and ketInfo['charging']:
+        if userInfo['charging']:
+            updateUserLimit(data, assistantContentInfo['usage']['total_tokens'])
+
+        if ketInfo['charging']:
             updateKeyLimit(ketInfo['key'], data['userId'], assistantContentInfo['usage']['total_tokens'])
 
-        # todo 更新模型的额度
-        if userCharging and base_url['charging']:
-            updateModelLimit(messageInfo['model'], data['userId'], assistantContentInfo['usage']['total_tokens'])
+        if base_url['charging']:
+            updateModelLimit( data['userId'], messageInfo['model'], assistantContentInfo['usage']['total_tokens'])
     # 发生错误
     else:
         await websocket.send_text(str(completion))

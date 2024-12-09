@@ -1,28 +1,33 @@
 <template>
-  <a-list :max-height="computedHeight" scrollbar :bordered="false">
-    <a-list-item v-for="(item, index) in props.messageList" :key="index">
-      <a-list-item-meta :title="item.role">
-        <template #description>
-          <MarkdownRenderer :markdown="item" />
+  <a-list  :virtualListProps="{
+      height: computedHeight,
+    }" :bordered="false" @scrollIntoView="scrollIntoView" :data="props.messageList">
+    <template #item="{ item, index }">
+      <a-list-item  :key="index">
+        <a-list-item-meta>
+          <template #description>
+            <MarkdownRenderer :markdown="item" />
+          </template>
+          <template #avatar>
+            <a-avatar shape="square" :style="item.role === 'user' ? { backgroundColor: '#3370ff' } : {}">
+              <IconUser  v-if="item.role === 'user'" />
+              <IconRobot v-if="item.role === 'assistant'" />
+              <IconBrush v-if="item.role === 'system'" />
+            </a-avatar>
+          </template>
+        </a-list-item-meta>
+        <template #actions>
+          <icon-edit />
+          <icon-delete />
         </template>
-        <template #avatar>
-          <a-avatar shape="square" :style="item.role === 'user' ? { backgroundColor: '#3370ff' } : {}">
-            <IconUser  v-if="item.role === 'user'" />
-            <IconRobot v-if="item.role === 'assistant'" />
-          </a-avatar>
-        </template>
-      </a-list-item-meta>
-      <template #actions>
-        <icon-edit />
-        <icon-delete />
-      </template>
-    </a-list-item>
+      </a-list-item>
+    </template>
   </a-list>
 </template>
 <script setup lang="ts">
 import { computed, onBeforeUnmount, defineProps, ref } from "vue";
 import MarkdownRenderer from "@/components/chat/content/MarkdownRenderer.vue";
-import { IconUser, IconRobot } from "@arco-design/web-vue/es/icon";
+import { IconUser, IconRobot, IconBrush } from "@arco-design/web-vue/es/icon";
 
 const props = defineProps({
   messageList: {
@@ -31,6 +36,9 @@ const props = defineProps({
   },
 });
 
+const scrollIntoView = () => {};
+
+// :max-height="computedHeight"
 /* 下面的就这样吧 */
 // 创建响应式的窗口高度数据
 const max_height = ref(window.innerHeight);

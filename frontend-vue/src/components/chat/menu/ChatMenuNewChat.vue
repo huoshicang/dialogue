@@ -23,10 +23,15 @@
       </a-form-item>
 
       <a-form-item field="system" label="预设" tooltip="">
-        <a-select v-model="form.system" placeholder="请选择预设" allow-clear>
-          <a-option value="你好">你好</a-option>
-          <a-option value="小红书">小红书</a-option>
-        </a-select>
+        <a-select
+          v-model="form.system"
+          placeholder="请选择预设"
+          allow-clear
+          allow-search
+          :virtual-list-props="{ height: 200 }"
+          :options="RegistryStore.gettersPromptList"
+          :field-names="{ value: 'prompt', label: 'act' }"
+        />
       </a-form-item>
 
       <a-form-item
@@ -35,14 +40,13 @@
         tooltip="进行对话的模型"
       >
         <a-select
-          v-model="form.chat_parameters.model"
           placeholder="请选择模型"
           allow-clear
           value-key="model_call"
           @change="handleChange"
         >
           <a-option
-            v-for="item of UserStore.gettersModelList"
+            v-for="item of RegistryStore.gettersModelList"
             :value="item"
             :label="item.model_name"
           />
@@ -82,7 +86,9 @@
       <!--        </a-switch>-->
       <!--      </a-form-item>-->
     </a-form>
-
+    <a-card>
+      {{ form.system }}
+    </a-card>
     <a-descriptions
       v-show="descriptionsData.length"
       style="margin-top: 10px"
@@ -95,12 +101,13 @@
 
 <script setup lang="ts">
 import { onMounted, reactive, ref, watch } from "vue";
-import { useUserStore } from "@/store";
+import { useUserStore, useRegistryStore } from "@/store";
 import { Api } from "@/api/api";
 import { Message } from "@arco-design/web-vue";
 import { add_chat_type } from "@/types/Response/ApiTypes";
 
 const UserStore = useUserStore();
+const RegistryStore = useRegistryStore();
 const props = defineProps(["getData"]);
 
 // 用户信息
@@ -144,8 +151,10 @@ const form = reactive({
 });
 
 const handleChange = (modelInfo: {}) => {
+  // 选清空数据
+  descriptionsData.value = [];
   form.chat_parameters.model = modelInfo.model_call;
-
+  // 添加数据
   descriptionsData.value.push({
     label: "使用模型",
     value: modelInfo.model_call,
@@ -170,7 +179,7 @@ const handleOk = async () => {
   if (form.chat_title === "") form.chat_title = "新的聊天";
 
   try {
-    const res = await Api.add_chat<add_chat_type>(form);
+    const res = await Api.add_chat(form);
 
     if (res.status_code === 200) {
       Message.success(res.data.message);
@@ -215,8 +224,12 @@ watch(new_chat_visible, (new_value) => {
 
 // 获取模型列表
 onMounted(async () => {
-  if (UserStore.gettersModelList.length === 0) {
-    await UserStore.getModelList();
+  if (RegistryStore.gettersModelList.length === 0) {
+    await RegistryStore.getModelList();
+  }
+
+  if (RegistryStore.gettersPromptList.length === 0) {
+    await RegistryStore.getPromptList();
   }
 });
 </script>

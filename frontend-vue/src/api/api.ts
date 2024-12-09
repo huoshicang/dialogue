@@ -21,7 +21,7 @@ export const Api = {
     return await my_get("/v1/retrieve/chat", data);
   },
   // 添加聊天
-  add_chat: async (data: add_chat_type): Promise<any> => {
+  add_chat: async (data: object): Promise<any> => {
     return await my_post("/v1/create/chat", data);
   },
   // 删除聊天
@@ -57,5 +57,10 @@ export const Api = {
   // 获取消息
   get_message: async (data: object): Promise<any> => {
     return await my_post("/v1/retrieve/message", data);
+  },
+
+  // 获取提示词
+  get_prompt: async (): Promise<any> => {
+    return await my_get("/v1/retrieve/prompts", {});
   },
 };

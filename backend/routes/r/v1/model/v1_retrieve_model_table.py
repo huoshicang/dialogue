@@ -55,7 +55,7 @@ async def v1_retrieve_model_table(data):
 
         # 判断是否获取成功
         if not model_find_info:
-            logger.error(f"{data['username']} 获取模型列表失败")
+            logger.error(f"{data['user_name']} 获取模型列表失败")
             return JSONResponse(
                 status_code=status.HTTP_404_NOT_FOUND,
                 content={

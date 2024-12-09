@@ -8,20 +8,24 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@kangc/v-md-editor": "^2.3.18",
+    "@vscode/markdown-it-katex": "^1.1.0",
     "buffer": "^6.0.3",
     "core-js": "^3.8.3",
     "crypto-browserify": "^3.12.0",
     "github-markdown-css": "^5.8.1",
-    "highlight.js": "^11.10.0",
     "jsonwebtoken": "^9.0.2",
+    "markdown-it": "^14.1.0",
+    "markdown-it-link-attributes": "^4.0.1",
     "marked": "^15.0.3",
-    "marked-highlight": "^2.2.1",
+    "mermaid-it-markdown": "^1.0.8",
     "pinia-plugin-persistedstate": "^3.2.1",
     "process": "^0.11.10",
     "stream-browserify": "^3.0.0",
     "util": "^0.12.5",
     "vm-browserify": "^1.1.2",
     "vue": "^3.5.4",
+    "vue-markdown": "^2.2.4",
     "vue-router": "^4.0.3"
   },
   "devDependencies": {
@@ -44,6 +48,7 @@
     "naive-ui": "^2.40.0",
     "pinia": "^2.2.2",
     "prettier": "^3.3.3",
+    "shiki": "^1.24.0",
     "typescript": "^5.5.4"
   },
   "eslintConfig": {
@@ -60,9 +65,7 @@
     "parserOptions": {
       "ecmaVersion": 2020
     },
-    "plugins": [
-      "prettier"
-    ],
+    "plugins": [],
     "rules": {
       "prettier/prettier": "error"
     }

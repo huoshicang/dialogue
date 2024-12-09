@@ -12,16 +12,11 @@ def getAssistant(ketInfo, base_url, messageInfo):
     :param messageInfo:
     :return: completion
     """
-
-    print(ketInfo, base_url, messageInfo)
-
     try:
         client = OpenAI(
             api_key=ketInfo['key'],
             base_url=base_url['base_url'],
         )
-
-        print(client)
 
         completion = client.chat.completions.create(
             model=messageInfo['model'],

@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { UserState, ModelState } from "./type";
+import { UserState } from "./type";
 import { Api } from "@/api/api";
 import ACCESS_ENUM from "@/router/access-enum";
 
@@ -11,7 +11,6 @@ export const useUserStore = defineStore({
         username: "未登录",
         role: ACCESS_ENUM.NOT_LOGIN,
       },
-      modelList: <ModelState[]>[],
     };
   },
 
@@ -34,17 +33,8 @@ export const useUserStore = defineStore({
         } as UserState;
       }
     },
-    async getModelList() {
-      try {
-        const res = await Api.get_model_list();
-        if (res.status_code === 200) this.modelList = res.data;
-      } catch (error) {}
-    },
   },
   getters: {
-    gettersModelList: (state) => {
-      return state.modelList;
-    },
     gettersUserInfo: (state) => {
       return state.user_info;
     },

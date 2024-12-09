@@ -12,7 +12,8 @@ def updateUserLimit(data, total_tokens):
             "$and": [
                 {"_id": ObjectId(data['userId']), },
                 {"is_deleted": False},
-                {"residue_limit": {"$gte": 0}}
+                {"enable": True},
+                {"limit": {"$gte": 0}}
             ]
         },
         {"charging": True, "limit": True}
@@ -23,16 +24,17 @@ def updateUserLimit(data, total_tokens):
         new_limit = user_info.get("limit", 0) - total_tokens
 
         # 更新用户的 limit 字段
-        update_result = users_clone.update_data(
-            {"_id": ObjectId(data['userId'])},
+        users_clone.update_data(
+            {
+                "$and": [
+                    {"_id": ObjectId(data['userId']), },
+                    {"is_deleted": False},
+                    {"enable": True},
+                ]
+            },
             {"$set": {"limit": int(new_limit)}}
         )
 
         users_clone.close_connection()
 
-        if update_result:
-            return True
-
     users_clone.close_connection()
-
-    return False

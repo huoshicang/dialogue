@@ -1,10 +1,14 @@
+import json
+
 from fastapi import APIRouter, WebSocket
 from pydantic import BaseModel
+from typing import List
 
 from config.logging_config import get_logger
 from routes.c.v1.model.v1_create_key import v1_create_key
 from routes.c.v1.model.v1_create_model import v1_create_model
 from routes.c.v1.model.v1_create_chat import v1_create_chat
+from routes.c.v1.model.v1_create_prompts import v1_create_prompts
 
 c_v1_router = APIRouter(prefix="/v1/create", tags=["create"])
 
@@ -185,3 +189,13 @@ async def model(key: Key):
         "limit": key.limit,
         "residue_limit": key.residue_limit
     })
+
+class Prompt(BaseModel):
+    cmd: str
+    act: str
+    prompt: str
+
+@c_v1_router.post("/prompts", response_model=List[Prompt])
+async def prompts(prompt: List[Prompt]):
+    """创建提示词"""
+    return await v1_create_prompts(prompt)

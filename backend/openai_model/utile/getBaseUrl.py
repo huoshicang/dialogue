@@ -16,6 +16,7 @@ def getBaseUrl(model):
             "$and": [
                 {"model_call": model},
                 {"is_deleted": False},
+                {"enable": True},
                 {"residue_limit": {"$gte": 0}}
             ]
         },

@@ -2,7 +2,7 @@ export interface get_chat_list_type {
   user_id: string;
 }
 
-type ChatParameters = {
+export interface ChatParameters {
   model: string;
   messages: any[]; // 假设消息是任意类型的数组，你可以根据实际情况调整类型
   top_p: number;
@@ -16,7 +16,7 @@ type ChatParameters = {
   tools?: any[] | null; // 工具的类型取决于具体需求，这里假设它们可能是任意类型的数组或null
   stream_options?: any | null; // 流选项的类型取决于具体需求
   enable_search: boolean;
-};
+}
 
 export interface add_chat_type {
   user_id: string; // 或者其他适合user_info._id的类型

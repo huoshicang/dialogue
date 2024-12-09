@@ -8,8 +8,12 @@ def updateKeyLimit(key, userId, total_tokens):
     # 根据 userId 和 keyId 查找 key
     key_info = keys_clone.find_data(
         {
-            "key": key,
-            "user_id": userId,
+            "$and": [
+                {"key": key, },
+                {"user_id": userId, },
+                {"enable": True, },
+                {"residue_limit": {"$gte": 0}}
+            ]
         },
         {
             "charging": True,
@@ -19,13 +23,16 @@ def updateKeyLimit(key, userId, total_tokens):
 
     if key_info and key_info.get("charging"):
         # 如果 charging 为 True，减少 limit 字段的值
-        new_limit = key_info.get("limit", 0) - total_tokens
+        new_limit = key_info.get("residue_limit", 0) - total_tokens
 
         # 更新 key 的 limit 字段
         keys_clone.update_data(
             {
-                "key": key,
-                "user_id": userId
+                "$and": [
+                    {"key": key, },
+                    {"user_id": userId, },
+                    {"enable": True, },
+                ]
             },
             {"$set": {"residue_limit": new_limit}}
         )

@@ -16,6 +16,7 @@ logger = get_logger(__name__)
 
 async def v1_create_chat(data):
     try:
+
         # 构建消息
         if data['system'] != "":
             data['chat_parameters']['messages'] = [
@@ -37,8 +38,17 @@ async def v1_create_chat(data):
                 }
             },
             {"key": True},
-            'residue_limit')[0]
+            'residue_limit')
+
         key_client.close_connection()
+
+        if not key_find_info:
+            return JSONResponse(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                content={
+                    "status_code": status.HTTP_400_BAD_REQUEST,
+                    "message": "没有可用的key",
+                })
 
         # 创建消息
         message_client = MongoDBClient("messages")
@@ -56,7 +66,7 @@ async def v1_create_chat(data):
             "tools": chat_parameters['tools'],
             "stream_options": chat_parameters['stream_options'],
             "enable_search": chat_parameters['enable_search'],
-            "key": str(key_find_info['_id'])
+            "key": str(key_find_info[0]['_id'])
         })
         message_client.close_connection()
 

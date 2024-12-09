@@ -92,6 +92,8 @@ const sendMessage = (sendMessage) => {
       messageList.value[messageListIndex]["content"] += event.data;
   };
 
+
+
   socket.onerror = function (error) {
     messageList.value[messageListIndex]["content"] = error;
     sendLoding.value = false;

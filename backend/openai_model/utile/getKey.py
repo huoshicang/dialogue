@@ -19,6 +19,7 @@ def getKey(key, model):
             "$and": [
                 {"_id": ObjectId(key)},
                 {"is_deleted": False},
+                {"enable": True},
                 {"residue_limit": {"$gte": 0}}
             ],
             "availableModels": {

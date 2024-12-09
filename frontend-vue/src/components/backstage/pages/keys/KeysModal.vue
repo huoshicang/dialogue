@@ -27,7 +27,7 @@
             allow-clear multiple
           >
             <a-option
-              v-for="(item, index) of UserStore.gettersModelList"
+              v-for="(item, index) of RegistryStore.gettersModelList"
               :key="index"
             >{{ item.model_call }}</a-option>
           </a-select>
@@ -76,9 +76,9 @@ import { defineProps, defineEmits, reactive, watchEffect, onMounted } from "vue"
 import { ValidatedError } from "@arco-design/web-vue/es/form/interface";
 import { Api } from "@/api/api";
 import { Message } from "@arco-design/web-vue";
-import { useUserStore } from "@/store";
+import { useRegistryStore, useUserStore } from "@/store";
 
-const UserStore = useUserStore();
+const RegistryStore = useRegistryStore();
 const user_info = useUserStore().user_info;
 
 const props = defineProps({
@@ -224,8 +224,8 @@ watchEffect(() => {
 
 // 获取模型列表
 onMounted(async () => {
-  if (UserStore.gettersModelList.length === 0) {
-    await UserStore.getModelList();
+  if (RegistryStore.gettersModelList.length === 0) {
+    await RegistryStore.getModelList();
   }
 });
 </script>

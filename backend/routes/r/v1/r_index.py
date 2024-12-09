@@ -8,6 +8,7 @@ from routes.r.v1.model.v1_retrieve_key import v1_retrieve_key
 from routes.r.v1.model.v1_retrieve_message import v1_retrieve_message
 from routes.r.v1.model.v1_retrieve_model_table import v1_retrieve_model_table
 from routes.r.v1.model.v1_retrieve_models import v1_retrieve_models
+from routes.r.v1.model.v1_retrieve_prompt import v1_retrieve_prompt
 
 r_v1_router = APIRouter(prefix="/v1/retrieve", tags=["retrieve"])
 
@@ -93,3 +94,9 @@ async def model(Key: Key):
         "user_name": Key.user_name,
         "user_role": Key.user_role
     })
+
+
+@r_v1_router.get("/prompts")
+async def prompts():
+    """获取消息"""
+    return await v1_retrieve_prompt()
