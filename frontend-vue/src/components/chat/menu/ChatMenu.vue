@@ -67,9 +67,16 @@ const chat_list = ref<
 // 加载状态
 const chat_list_loading = ref(true);
 
+/*
+ * 点击菜单项
+ * @param key: string 菜单项的key
+ * @return void
+ * */
 const onClickMenuItem = (key: string) => router.push(`/chat/${key}`);
 
-// 请求数据
+/*
+ * 获取聊天列表
+ * */
 const getData = async () => {
   try {
     const res = await Api.get_chat_list<get_chat_list_type>({
@@ -88,7 +95,10 @@ const getData = async () => {
   }
 };
 
-// 删除聊天
+/*
+ * 删除聊天记录
+ * @param data: object 删除的参数
+ * */
 const deleteChat = async (data) => {
   try {
     const res = await Api.delete_chat({
@@ -99,6 +109,7 @@ const deleteChat = async (data) => {
     if (res.status_code === 200) {
       Message.success(res.message);
       await getData();
+      await router.push("/chat");
     } else {
       Message.error(res.message);
     }
@@ -111,13 +122,17 @@ const deleteChat = async (data) => {
 
 onMounted(async () => getData());
 
+/*
+ * 设置菜单选中
+ * @param id: string 菜单id
+ * @return void
+ * */
 const setMenuSelected = (id: string) => {
-  menuSelected.value = [id]
+  menuSelected.value = [id];
 };
 
 // 侦听路由的参数，以便再次获取数据
 watch(() => route.params.id, setMenuSelected, { immediate: true });
-
 </script>
 
 <style scoped></style>

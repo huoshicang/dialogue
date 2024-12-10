@@ -3,6 +3,13 @@ from database.mongo import MongoDBClient
 
 
 def updateKeyLimit(key, userId, total_tokens):
+    """
+    更新 key 的剩余额度
+    :param key: key
+    :param userId: 用户ID
+    :param total_tokens: 消耗的 token 数量
+    :return: None
+    """
     keys_clone = MongoDBClient("keys")
 
     # 根据 userId 和 keyId 查找 key

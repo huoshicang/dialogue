@@ -19,12 +19,14 @@ def getAssistant(ketInfo, base_url, messageInfo):
         )
 
         completion = client.chat.completions.create(
+            timeout=180,
             model=messageInfo['model'],
             messages=messageInfo['messages'],
             top_p=messageInfo['top_p'],
             temperature=messageInfo['temperature'],
             stream=True,
-            stream_options={"include_usage": True}
+            stream_options={"include_usage": True},
+            # tools=messageInfo['tools']
         )
 
         return completion, True

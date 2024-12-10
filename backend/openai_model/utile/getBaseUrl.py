@@ -1,10 +1,11 @@
 from database.mongo import MongoDBClient
 
 
-def getBaseUrl(model):
+def getBaseUrl(model, tokens):
     """
     获取baseUrl
     :param model: 模型名
+    :param tokens: 额度
     :return: {
             "base_url": https://xxx.xx,
             "charging": True,
@@ -17,7 +18,7 @@ def getBaseUrl(model):
                 {"model_call": model},
                 {"is_deleted": False},
                 {"enable": True},
-                {"residue_limit": {"$gte": 0}}
+                {"residue_limit": {"$gte": tokens}}
             ]
         },
         {

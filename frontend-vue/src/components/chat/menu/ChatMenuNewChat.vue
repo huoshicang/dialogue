@@ -55,7 +55,7 @@
 
       <a-form-item
         field="system"
-        label="生成的随机性"
+        label="随机性"
         tooltip="取值越大，生成的随机性越高；取值越低，生成的确定性越高。"
       >
         <a-slider
@@ -86,9 +86,7 @@
       <!--        </a-switch>-->
       <!--      </a-form-item>-->
     </a-form>
-    <a-card>
-      {{ form.system }}
-    </a-card>
+      <a-textarea v-model:model-value="form.system" />
     <a-descriptions
       v-show="descriptionsData.length"
       style="margin-top: 10px"
@@ -105,6 +103,8 @@ import { useUserStore, useRegistryStore } from "@/store";
 import { Api } from "@/api/api";
 import { Message } from "@arco-design/web-vue";
 import { add_chat_type } from "@/types/Response/ApiTypes";
+import router from "@/router";
+import { useRoute } from "vue-router";
 
 const UserStore = useUserStore();
 const RegistryStore = useRegistryStore();
@@ -112,6 +112,7 @@ const props = defineProps(["getData"]);
 
 // 用户信息
 const user_info = UserStore.user_info;
+const route = useRoute();
 
 // 新建聊天的弹窗开关
 const new_chat_visible = ref<boolean>(false);
@@ -150,6 +151,11 @@ const form = reactive({
   },
 });
 
+/*
+* 监听模型选择
+* @param modelInfo 模型信息
+* @return void
+* */
 const handleChange = (modelInfo: {}) => {
   // 选清空数据
   descriptionsData.value = [];
@@ -173,7 +179,10 @@ const handleChange = (modelInfo: {}) => {
   });
 };
 
-// 创建新的聊天
+/*
+* 创建新的聊天
+* @return void
+* */
 const handleOk = async () => {
   ok_loading.value = true;
   if (form.chat_title === "") form.chat_title = "新的聊天";
@@ -184,6 +193,7 @@ const handleOk = async () => {
     if (res.status_code === 200) {
       Message.success(res.data.message);
       props.getData();
+      await router.push(`/chat/${res.data.chat_data.chat_id}`);
     } else {
       Message.error(res.message);
     }

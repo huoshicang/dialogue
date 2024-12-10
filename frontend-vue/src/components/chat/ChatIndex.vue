@@ -39,8 +39,16 @@ const sendLoding = ref(false);
 const chatId = ref<string | undefined | null>(null);
 const messageList = ref([]);
 
+/*
+* 获取聊天记录
+* @param id 聊天id
+* @return void
+* */
 const getMessage = async (id) => {
-  if (!id) return;
+  if (!id) {
+    chatId.value = null;
+    return
+  }
   chatId.value = id;
 
   try {
@@ -57,6 +65,11 @@ const getMessage = async (id) => {
   }
 };
 
+/*
+* 发送消息
+* @param sendMessage 发送的消息
+* @return void
+* */
 const sendMessage = (sendMessage) => {
   sendLoding.value = true;
   const host = process.env.VUE_APP_WS_BALEURL !== "/dialogue/message" ? process.env.VUE_APP_BALEURL.replace(`${window.location.protocol}//`, "") : window.location.host;
@@ -87,13 +100,20 @@ const sendMessage = (sendMessage) => {
     );
   };
 
+  /*
+  * 接收消息
+  * @param event 接收到的消息
+  * @return void
+  * */
   socket.onmessage = function (event) {
     if (event.data)
       messageList.value[messageListIndex]["content"] += event.data;
   };
 
-
-
+  /*
+  * 错误处理
+  * @return void
+  * */
   socket.onerror = function (error) {
     messageList.value[messageListIndex]["content"] = error;
     sendLoding.value = false;

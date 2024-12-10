@@ -3,7 +3,7 @@ from database.mongo import MongoDBClient
 
 
 def updateModelLimit(userId, model, total_tokens):
-    print(model)
+
     models_clone = MongoDBClient("models")
 
     # 根据 userId 和 model 查找 model
