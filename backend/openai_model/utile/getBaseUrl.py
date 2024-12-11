@@ -18,12 +18,12 @@ def getBaseUrl(model, tokens):
                 {"model_call": model},
                 {"is_deleted": False},
                 {"enable": True},
-                {"residue_limit": {"$gte": tokens}}
             ]
         },
         {
             "base_url": True,
             "charging": True,
+            "residue_limit": True,
         })
     model_clone.close_connection()
     return model_find_info

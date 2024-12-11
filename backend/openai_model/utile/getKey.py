@@ -3,10 +3,9 @@ from bson import ObjectId
 from database.mongo import MongoDBClient
 
 
-def getKey(key, model, tokens):
+def getKey(key, model):
     """
     获取key
-    :param tokens: 额度
     :param key: keyID
     :param model: 模型
     :return: {
@@ -21,7 +20,6 @@ def getKey(key, model, tokens):
                 {"_id": ObjectId(key)},
                 {"is_deleted": False},
                 {"enable": True},
-                {"residue_limit": {"$gte": tokens}}
             ],
             "availableModels": {
                 "$in": [model]
@@ -30,6 +28,9 @@ def getKey(key, model, tokens):
         {
             "key": True,
             "charging": True,
+            "residue_limit": True,
         })
     keys_clone.close_connection()
+
+
     return keys_find_info

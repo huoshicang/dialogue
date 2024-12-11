@@ -12,7 +12,7 @@
     <template #subtitle>
       {{ user_info.introduction }}
       <a-breadcrumb>
-        <a-breadcrumb-item>v1.1.3</a-breadcrumb-item>
+        <a-breadcrumb-item>v1.1.4</a-breadcrumb-item>
       </a-breadcrumb>
     </template>
     <template #extra>

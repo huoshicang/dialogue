@@ -2,46 +2,26 @@ from bson import ObjectId
 from database.mongo import MongoDBClient
 
 
-def updateKeyLimit(key, userId, total_tokens):
+def updateKeyLimit(key, userId, newLimit):
     """
     更新 key 的剩余额度
     :param key: key
     :param userId: 用户ID
-    :param total_tokens: 消耗的 token 数量
+    :param newLimit: 新的额度
     :return: None
     """
     keys_clone = MongoDBClient("keys")
 
-    # 根据 userId 和 keyId 查找 key
-    key_info = keys_clone.find_data(
+    # 更新 key 的 limit 字段
+    keys_clone.update_data(
         {
             "$and": [
                 {"key": key, },
                 {"user_id": userId, },
                 {"enable": True, },
-                {"residue_limit": {"$gte": 0}}
             ]
         },
-        {
-            "charging": True,
-            "residue_limit": True
-        }
+        {"$set": {"residue_limit": newLimit}}
     )
-
-    if key_info and key_info.get("charging"):
-        # 如果 charging 为 True，减少 limit 字段的值
-        new_limit = key_info.get("residue_limit", 0) - total_tokens
-
-        # 更新 key 的 limit 字段
-        keys_clone.update_data(
-            {
-                "$and": [
-                    {"key": key, },
-                    {"user_id": userId, },
-                    {"enable": True, },
-                ]
-            },
-            {"$set": {"residue_limit": new_limit}}
-        )
 
     keys_clone.close_connection()
