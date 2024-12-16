@@ -108,13 +108,13 @@ async def websocket_endpoint(websocket: WebSocket):
             logger.info(f"用户{data['userId']}合计tokens：{TotalTokens}")
 
             # 更新消息记录
-            # updateMessage(data, {
-            #     "role": "user",
-            #     "content": data['sendMessage']
-            # }, {
-            #                   "role": "assistant",
-            #                   "content": assistantContentInfo['choices'][0]['delta']['content']
-            #               })
+            updateMessage(data, {
+                "role": "user",
+                "content": data['sendMessage']
+            }, {
+                              "role": "assistant",
+                              "content": assistantContentInfo['choices'][0]['delta']['content']
+                          })
 
             # 更新用户、key和模型的额度
             if userInfo['charging']:

@@ -1,5 +1,6 @@
 <template>
-  <a-config-provider :locale="zhCN">
+  <n-message-provider>
+    <a-config-provider :locale="zhCN">
       <router-view name="app_view" v-slot="{ Component }">
         <transition name="fade">
           <keep-alive>
@@ -7,20 +8,20 @@
           </keep-alive>
         </transition>
       </router-view>
-  </a-config-provider>
+    </a-config-provider>
+  </n-message-provider>
 </template>
 
 <script setup lang="ts">
 import zhCN from "@arco-design/web-vue/es/locale/lang/zh-cn";
-import { darkTheme } from 'naive-ui'
-import type { GlobalTheme } from 'naive-ui'
+import { darkTheme } from "naive-ui";
+import type { GlobalTheme } from "naive-ui";
 import { useRouter } from "vue-router";
 import { onMounted, ref } from "vue";
 
 const router = useRouter();
 
-const theme = ref<GlobalTheme | null>(darkTheme)
-
+const theme = ref<GlobalTheme | null>(darkTheme);
 </script>
 <style scoped>
 .layout-demo-app {

@@ -1,6 +1,6 @@
 <template>
   <a-layout class="layout-demo-chat">
-    <a-layout-sider collapsible>
+    <a-layout-sider collapsible hide-trigger>
       <ChatMenu />
       <!-- trigger -->
       <template #trigger="{ collapsed }">
@@ -143,7 +143,7 @@ onMounted(() => {
 
 .layout-demo-chat :deep(.arco-layout-footer) {
   background-color: var(--color-bg-2);
-  border-top: 1px solid var(--color-border);
+  //border-top: 1px solid var(--color-border);
   max-height: 160px;
 }
 </style>

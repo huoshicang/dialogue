@@ -27,10 +27,10 @@ async def v1_create_key(data):
                 status_code=status.HTTP_400_BAD_REQUEST,
                 content={
                     "status_code": status.HTTP_400_BAD_REQUEST,
-                    "message": "模型创建失败",
+                    "message": "密钥创建失败",
                 })
 
-        logger.warning(f"模型创建成功")
+        logger.info(f"密钥创建成功")
         return JSONResponse(
             status_code=status.HTTP_200_OK,
             content={

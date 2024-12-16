@@ -55,7 +55,10 @@ class RedisClient:
         """
         try:
             value = self.r.get(key)
-            return json.loads(value)
+            try:
+                return json.loads(value)
+            except:
+                return value
         except Exception as e:
             logger.error(f"获取值时出错: {e}")
             return None

@@ -1,12 +1,18 @@
 <template>
-  <div id="chatFooter" ref="myDiv">
-    <a-space direction="vertical">
-      <a-button-group type="primary">
-        <a-button type="text" size="mini">copy</a-button>
-      </a-button-group>
-    </a-space>
-
+  <div id="chatFooter">
     <a-layout class="chat-footer">
+      <a-layout-sider>
+        <a-button-group type="primary">
+          <!--清除消息-->
+          <a-tooltip content="清除消息">
+            <a-button type="outline">
+              <template #icon>
+                <icon-delete @click="sendMessageFooter" />
+              </template>
+            </a-button>
+          </a-tooltip>
+        </a-button-group>
+      </a-layout-sider>
       <a-layout-content>
         <a-textarea
           v-model:model-value="text"
@@ -19,7 +25,11 @@
       </a-layout-content>
       <a-layout-sider>
         <n-button-group vertical>
-          <a-button :loading="props.sendLoding" type="outline">
+          <a-button
+            :loading="props.sendLoding"
+            type="outline"
+            :disabled="!text"
+          >
             <template #icon>
               <icon-send @click="sendMessageFooter" />
             </template>
@@ -27,7 +37,6 @@
         </n-button-group>
       </a-layout-sider>
     </a-layout>
-
     <span class="information">项目开发中</span>
   </div>
 </template>
@@ -55,28 +64,42 @@ const sendMessageFooter = () => {
 };
 </script>
 
-<style scoped>
-#chatFooter .information {
-  padding: 5px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  color: var(--color-text-4);
-  font-stretch: condensed;
-  text-align: center;
-}
+<style scoped lang="less">
+#chatFooter {
+  padding: 0 10px;
 
-#chatFooter .chat-footer :deep(.arco-layout-content) {
-  padding: 0;
-}
+  .information {
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: var(--color-text-4);
+    font-stretch: condensed;
+    text-align: center;
+  }
 
-#chatFooter .chat-footer :deep(.arco-layout-sider-light) {
-  box-shadow: None;
-  width: auto !important;
-}
+  .chat-footer {
+    padding-top: 10px;
+    display: flex;
+    align-items: center;
 
-#chatFooter .chat-footer :deep(.arco-btn-size-medium.arco-btn-only-icon) {
-  height: 34px;
-  width: 34px;
+    .arco-layout-content {
+      margin: 0 10px;
+    }
+
+    :deep(.arco-layout-content) {
+      padding: 0;
+    }
+
+    :deep(.arco-layout-sider-light) {
+      box-shadow: None;
+      width: auto !important;
+    }
+
+    :deep(.arco-btn-size-medium.arco-btn-only-icon) {
+      height: 34px;
+      width: 34px;
+    }
+  }
 }
 </style>

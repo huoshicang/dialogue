@@ -12,7 +12,7 @@
     <template #subtitle>
       {{ user_info.introduction }}
       <a-breadcrumb>
-        <a-breadcrumb-item>v1.1.4</a-breadcrumb-item>
+        <a-breadcrumb-item>v1.1.5</a-breadcrumb-item>
       </a-breadcrumb>
     </template>
     <template #extra>
@@ -37,7 +37,7 @@ import { onMounted, ref } from "vue";
 
 const router = useRouter();
 
-const user_info = useUserStore().user_info;
+const user_info = useUserStore().gettersUserInfo;
 const theme = ref<string>("")
 
 const onChangeTheme = () => {

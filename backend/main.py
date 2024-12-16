@@ -6,6 +6,10 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from fastapi.staticfiles import StaticFiles
+import base64
+
+from starlette import status
+from starlette.responses import JSONResponse
 
 from config.logging_config import setup_logger, get_logger
 
@@ -31,12 +35,13 @@ logger = get_logger(__name__)
 
 # 跨域
 app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # 允许的源
+    middleware_class=CORSMiddleware,
+    allow_origins=["localhost", '127.0.0.1'],  # 允许的源
     allow_credentials=True,
-    allow_methods=["*"],  # 允许的方法，如 GET, POST 等
+    allow_methods=["GET", "POST"],  # 允许的方法，如 GET, POST 等
     allow_headers=["*"],  # 允许的头
 )
+
 
 # app.mount("/", StaticFiles(directory="dist", html=True), name="vue_static")
 
@@ -44,32 +49,35 @@ app.add_middleware(
 async def catch_all(request: Request):
     return FileResponse("dist/index.html")
 
+
 # 定义中间件
 @app.middleware("http")
+@app.middleware("https")
 async def process_time_middleware(request: Request, call_next):
-    # 记录路径参数
-    path_params = request.path_params
-    if path_params:
-        logger.info(f"路径参数: {path_params}")
+    nonce = request.headers.get("nonce")
+    timestamp = request.headers.get('timestamp')
+    if not nonce:
+        logger.error("非法请求: 缺少nonce参数")
+        return JSONResponse(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            content={
+                "status_code": status.HTTP_400_BAD_REQUEST,
+                "message": "非法请求",
+            },
+        )
 
-    # 记录请求体
-    if request.method in ["POST"]:
-        try:
-            body = await request.json()
-            logger.info(f"请求正文: {body}")
-        except Exception as e:
-            logger.warning(f"解析JSON正文失败: {e}")
+    nonce = int(base64.b64decode(nonce).decode()) - int(timestamp[::-1])
 
-    # 记录查询参数
-    query_params = request.query_params
-    if query_params:
-        logger.info(f"查询参数: {query_params}")
+    if nonce != int(timestamp):
+        logger.error("非法请求: 时间戳不匹配")
+        return JSONResponse(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            content={
+                "status_code": status.HTTP_400_BAD_REQUEST,
+                "message": "非法请求",
+            },
+        )
 
-    # 打印请求头信息
-    if request.headers.get('cookie'):
-        logger.info(request.headers.get('cookie'))
-
-    # 将Request请求传回原路由
     response = await call_next(request)
 
     response.headers["X-Requested-Url"] = str(request.url).replace(str(request.base_url), "")

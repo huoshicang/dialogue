@@ -1,5 +1,5 @@
 import os
-
+import secrets
 from dotenv import load_dotenv
 from starlette import status
 from starlette.responses import JSONResponse
@@ -7,7 +7,6 @@ from config.logging_config import get_logger
 from database.mongo import MongoDBClient
 from database.redis_client import RedisClient
 from utils.hash_password import hash_password
-import uuid
 
 from utils.randomStringGenerator import generate_random_string
 from utils.token import sign
@@ -16,6 +15,7 @@ logger = get_logger(__name__)
 
 
 async def login_routes(data, request):
+
     try:
         load_dotenv()
 
@@ -54,22 +54,7 @@ async def login_routes(data, request):
         find_info['_id'] = str(find_info['_id'])
 
         # 创建信息键
-        UUID = str(uuid.uuid4()).replace("-", "").upper()
-
-        # 存储登录信息
-        redis_client = RedisClient()
-        redis_client.set_key_value(UUID, find_info, os.getenv("EX", 604800))
-        redis_client.close_connection()
-
-        # 存储登录信息
-        if not redis_client:
-            logger.error(f"{data["account"]} 登录失败")
-            return JSONResponse(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                content={
-                    "status_code": status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    "message": "登录失败",
-                })
+        session_id = secrets.token_hex(32).upper()
 
         logger.info(f"{data["account"]} 登录成功")
 
@@ -84,8 +69,13 @@ async def login_routes(data, request):
                 },
             },
             headers={
+                "Authorization": sign({
+                    "sub": find_info['_id'],
+                    "name": find_info['username'],
+                    "jti": session_id[::2]
+                }, session_id, int(os.getenv("EX", 604800))),
                 "x-requested-url": "login",
-                "Set-Cookie": f"sessionId={UUID}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age={int(os.getenv("EX", 604800))}"
+                "Set-Cookie": f"sessionId={session_id}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age={int(os.getenv("EX", 604800))}"
             },
         )
 

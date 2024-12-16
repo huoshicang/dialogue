@@ -86,7 +86,7 @@
       <!--        </a-switch>-->
       <!--      </a-form-item>-->
     </a-form>
-      <a-textarea v-model:model-value="form.system" />
+    <a-textarea v-model:model-value="form.system" />
     <a-descriptions
       v-show="descriptionsData.length"
       style="margin-top: 10px"
@@ -152,10 +152,10 @@ const form = reactive({
 });
 
 /*
-* 监听模型选择
-* @param modelInfo 模型信息
-* @return void
-* */
+ * 监听模型选择
+ * @param modelInfo 模型信息
+ * @return void
+ * */
 const handleChange = (modelInfo: {}) => {
   // 选清空数据
   descriptionsData.value = [];
@@ -180,9 +180,9 @@ const handleChange = (modelInfo: {}) => {
 };
 
 /*
-* 创建新的聊天
-* @return void
-* */
+ * 创建新的聊天
+ * @return void
+ * */
 const handleOk = async () => {
   ok_loading.value = true;
   if (form.chat_title === "") form.chat_title = "新的聊天";
@@ -225,11 +225,8 @@ const handleOk = async () => {
 
 // 控制新建聊天的菜单选中
 watch(new_chat_visible, (new_value) => {
-  if (new_value) {
-    selected_keys.value = ["1"];
-  } else {
-    selected_keys.value = [""];
-  }
+  if (new_value) selected_keys.value = ["1"];
+  else selected_keys.value = [""];
 });
 
 // 获取模型列表

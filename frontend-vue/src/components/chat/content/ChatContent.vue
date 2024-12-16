@@ -1,16 +1,26 @@
 <template>
-  <a-list  :virtualListProps="{
+  <a-list
+    :virtualListProps="{
       height: computedHeight,
-    }" :bordered="false" @scrollIntoView="scrollIntoView" :data="props.messageList">
+    }"
+    :bordered="false"
+    @scrollIntoView="scrollIntoView"
+    :data="props.messageList"
+  >
     <template #item="{ item, index }">
-      <a-list-item  :key="index">
+      <a-list-item :key="index" >
         <a-list-item-meta>
           <template #description>
-            <MarkdownRenderer :markdown="item" />
+            <Message :text="item.content" />
           </template>
           <template #avatar>
-            <a-avatar shape="square" :style="item.role === 'user' ? { backgroundColor: '#3370ff' } : {}">
-              <IconUser  v-if="item.role === 'user'" />
+            <a-avatar
+              shape="square"
+              :style="
+                item.role === 'user' ? { backgroundColor: '#3370ff' } : {}
+              "
+            >
+              <IconUser v-if="item.role === 'user'" />
               <IconRobot v-if="item.role === 'assistant'" />
               <IconBrush v-if="item.role === 'system'" />
             </a-avatar>
@@ -26,7 +36,7 @@
 </template>
 <script setup lang="ts">
 import { computed, onBeforeUnmount, defineProps, ref } from "vue";
-import MarkdownRenderer from "@/components/chat/content/MarkdownRenderer.vue";
+import Message from "@/components/chat/content/Message/index.vue";
 import { IconUser, IconRobot, IconBrush } from "@arco-design/web-vue/es/icon";
 
 const props = defineProps({
@@ -62,4 +72,8 @@ const computedHeight = computed(() => {
   return max_height.value - 64 - 162;
 });
 </script>
-<style scoped></style>
+<style scoped>
+:deep(.arco-list-item-main){
+  margin-right: 10px;
+}
+</style>
