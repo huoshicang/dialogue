@@ -1,4 +1,5 @@
 <template>
+  <!--列表-->
   <a-list
     :virtualListProps="{
       height: computedHeight,
@@ -8,11 +9,17 @@
     :data="props.messageList"
   >
     <template #item="{ item, index }">
-      <a-list-item :key="index" >
+      <a-list-item
+        :key="index"
+        :style="{
+          background: item.role === 'user' ? 'var(--color-fill-3)' : '',
+        }"
+      >
         <a-list-item-meta>
           <template #description>
-            <Message :text="item.content" />
+            <TextComponent :error="false" :text="item.content" />
           </template>
+          <!--头像-->
           <template #avatar>
             <a-avatar
               shape="square"
@@ -26,7 +33,7 @@
             </a-avatar>
           </template>
         </a-list-item-meta>
-        <template #actions>
+        <template #actions v-if="item.role === 'user'">
           <icon-edit />
           <icon-delete />
         </template>
@@ -35,9 +42,14 @@
   </a-list>
 </template>
 <script setup lang="ts">
+import 'katex/dist/katex.min.css'
+import '@/styles/lib/tailwind.css'
+import '@/styles/lib/highlight.less'
+import '@/styles/lib/github-markdown.less'
+import '@/styles/global.less'
 import { computed, onBeforeUnmount, defineProps, ref } from "vue";
-import Message from "@/components/chat/content/Message/index.vue";
 import { IconUser, IconRobot, IconBrush } from "@arco-design/web-vue/es/icon";
+import TextComponent from "@/components/chat/content/Message/Text.vue";
 
 const props = defineProps({
   messageList: {
@@ -48,32 +60,31 @@ const props = defineProps({
 
 const scrollIntoView = () => {};
 
-// :max-height="computedHeight"
-/* 下面的就这样吧 */
 // 创建响应式的窗口高度数据
-const max_height = ref(window.innerHeight);
+const windowHeight = ref(window.innerHeight);
 
-// 用于更新窗口高度的函数，当窗口大小变化时调用它来更新响应式数据的值
+// 用于更新窗口高度的函数
 const updateWindowHeight = () => {
-  max_height.value = window.innerHeight;
+  windowHeight.value = window.innerHeight;
 };
 
 // 监听窗口大小变化
 window.addEventListener("resize", updateWindowHeight);
 updateWindowHeight();
 
-// 在组件销毁前移除窗口大小变化的监听，避免内存泄漏
+// 在组件销毁前移除窗口大小变化的监听
 onBeforeUnmount(() => {
   window.removeEventListener("resize", updateWindowHeight);
 });
 
-// 计算属性，基于窗口高度的响应式数据进行计算，减去161再减去 footerHeight
+// 计算属性，基于窗口高度进行计算
 const computedHeight = computed(() => {
-  return max_height.value - 64 - 162;
+  const footerHeight = 162; // 假设 footerHeight 是一个固定的值
+  return windowHeight.value - 64 - footerHeight;
 });
 </script>
 <style scoped>
-:deep(.arco-list-item-main){
+:deep(.arco-list-item-main) {
   margin-right: 10px;
 }
 </style>

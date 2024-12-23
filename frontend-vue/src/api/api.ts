@@ -35,13 +35,18 @@ export const Api = {
   },
 
   // 添加模型
-  add_model: async (data: ModelInfo): Promise<any> => {
+  add_model: async (data: ModelInfoForm): Promise<any> => {
     return await my_post("/v1/create/model", data);
   },
 
   // 获取模型列表
   get_model_list: async (): Promise<any> => {
     return await my_get("/v1/retrieve/models", {});
+  },
+
+  // 更新模型
+  update_model: async (data: ModelInfoForm): Promise<any> => {
+    return await my_post("/v1/update/model", data);
   },
 
   // 添加密钥
@@ -54,9 +59,19 @@ export const Api = {
     return await my_post("/v1/retrieve/key", data);
   },
 
+  // 更新密钥
+  update_key: async (data: KeyInfo): Promise<any> => {
+    return await my_post("/v1/update/key", data);
+  },
+
   // 获取消息
   get_message: async (data: object): Promise<any> => {
     return await my_post("/v1/retrieve/message", data);
+  },
+
+  // 清空消息
+  clear_message: async (data: object): Promise<any> => {
+    return await my_post("/v1/delete/message", data);
   },
 
   // 获取提示词

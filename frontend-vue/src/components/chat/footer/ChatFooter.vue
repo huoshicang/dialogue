@@ -2,16 +2,14 @@
   <div id="chatFooter">
     <a-layout class="chat-footer">
       <a-layout-sider>
-        <a-button-group type="primary">
-          <!--清除消息-->
-          <a-tooltip content="清除消息">
-            <a-button type="outline">
-              <template #icon>
-                <icon-delete @click="sendMessageFooter" />
-              </template>
-            </a-button>
-          </a-tooltip>
-        </a-button-group>
+        <!--清除消息-->
+        <a-tooltip content="清除消息">
+          <a-button @click="clearMessageFooter">
+            <template #icon>
+              <icon-delete />
+            </template>
+          </a-button>
+        </a-tooltip>
       </a-layout-sider>
       <a-layout-content>
         <a-textarea
@@ -29,9 +27,10 @@
             :loading="props.sendLoding"
             type="outline"
             :disabled="!text"
+            @click="sendMessageFooter"
           >
             <template #icon>
-              <icon-send @click="sendMessageFooter" />
+              <icon-send />
             </template>
           </a-button>
         </n-button-group>
@@ -43,6 +42,13 @@
 
 <script setup lang="ts">
 import { ref, defineProps } from "vue";
+import { Api } from "@/api/api";
+import { useUserStore } from "@/store";
+import { useRoute } from "vue-router";
+import { Message } from "@arco-design/web-vue";
+
+const UserStore = useUserStore().gettersUserInfo;
+const route = useRoute();
 
 const props = defineProps({
   sendLoding: {
@@ -55,12 +61,27 @@ const props = defineProps({
 const text = ref<string>("");
 
 // 父组件触发事件 发送消息
-const emit = defineEmits(["sendMessage"]);
+const emit = defineEmits(["sendMessage", "clearMessage"]);
 
 // 发送消息
 const sendMessageFooter = () => {
   emit("sendMessage", text.value);
   text.value = "";
+};
+
+const clearMessageFooter = async () => {
+  try {
+    const res = await Api.clear_message({
+      chat_id: route.params.id,
+      user_id: UserStore._id,
+    });
+    if (res.status_code === 200) {
+      Message.success(res.message);
+      emit("clearMessage");
+    } else Message.error(res.message);
+  } catch (err) {
+    console.log("获取失败");
+  }
 };
 </script>
 

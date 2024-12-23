@@ -147,10 +147,10 @@ const handleSubmit = async ({
       const res = (await Api.register(values)) as ApiResponse;
 
       if (res.status_code === 200) {
-        Message.success(res.message);
+        Message.success(res.data.message);
         changeContent();
       } else {
-        Message.error(res.message);
+        Message.error(res.data.message);
       }
     } catch (err: any) {
       Message.warning(err.message);

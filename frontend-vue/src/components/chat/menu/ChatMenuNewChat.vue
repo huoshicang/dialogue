@@ -102,7 +102,6 @@ import { onMounted, reactive, ref, watch } from "vue";
 import { useUserStore, useRegistryStore } from "@/store";
 import { Api } from "@/api/api";
 import { Message } from "@arco-design/web-vue";
-import { add_chat_type } from "@/types/Response/ApiTypes";
 import router from "@/router";
 import { useRoute } from "vue-router";
 

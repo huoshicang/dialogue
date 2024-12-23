@@ -49,7 +49,6 @@ async def v1_retrieve_model_table(data):
                 "created_at": False,
                 "is_deleted": False,
                 "updated_at": False,
-                "user_id": False,
             })
         model_cline.close_connection()
 

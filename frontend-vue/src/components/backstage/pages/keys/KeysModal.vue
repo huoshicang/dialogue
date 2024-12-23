@@ -6,77 +6,88 @@
       :footer="false"
     >
       <template #title>{{ props.keyVisible.title }}</template>
-      <a-form
-        ref="formRef"
-        :rules="rules"
-        :style="{ width: '600px' }"
-        :model="form"
-        @submit="handleSubmit"
-      >
-        <a-form-item field="key" label="密钥" validate-trigger="blur">
-          <a-input v-model="form.key" />
-        </a-form-item>
-        <a-form-item
-          field="availableModels"
-          label="可用模型"
-          validate-trigger="blur"
+      <a-scrollbar style="overflow: auto">
+        <a-form
+          ref="formRef"
+          :rules="rules"
+          :style="{ width: '600px' }"
+          :model="form"
+          @submit="handleSubmit"
         >
-          <a-select
-            v-model:model-value="form.availableModels"
-            placeholder="请选择模型"
-            allow-clear multiple
+          <a-form-item field="key" label="密钥" validate-trigger="blur">
+            <a-input v-model="form.key" />
+          </a-form-item>
+          <a-form-item
+            field="availableModels"
+            label="可用模型"
+            validate-trigger="blur"
           >
-            <a-option
-              v-for="(item, index) of RegistryStore.gettersModelList"
-              :key="index"
-            >{{ item.model_call }}</a-option>
-          </a-select>
-        </a-form-item>
-        <a-form-item
-          field="key_introduction"
-          label="密钥说明"
-          validate-trigger="blur"
-        >
-          <a-textarea
-            v-model:model-value="form.key_introduction"
-            :auto-size="{ maxRows: 4, minRows: 1 }"
-            allow-clear
-            show-word-limit
-          />
-        </a-form-item>
+            <a-select
+              v-model:model-value="form.availableModels"
+              placeholder="请选择模型"
+              allow-clear
+              multiple
+            >
+              <a-option
+                v-for="(item, index) of RegistryStore.gettersModelList"
+                :key="index"
+                >{{ item.model_call }}
+              </a-option>
+            </a-select>
+          </a-form-item>
+          <a-form-item
+            field="key_introduction"
+            label="密钥说明"
+            validate-trigger="blur"
+          >
+            <a-textarea
+              v-model:model-value="form.key_introduction"
+              :auto-size="{ maxRows: 4, minRows: 1 }"
+              allow-clear
+              show-word-limit
+            />
+          </a-form-item>
 
-        <a-form-item field="limit" label="总额度">
-          <a-input-number v-model="form.limit" />
-        </a-form-item>
-        <a-form-item field="residue_limit" label="剩余额度">
-          <a-input-number v-model="form.residue_limit" />
-        </a-form-item>
-        <a-form-item
-          field="enable"
-          label="是否启用"
-          v-if="props.keyVisible.title === '编辑密钥'"
-        >
-          <a-switch v-model="form.enable" />
-        </a-form-item>
-        <a-form-item
-          field="charging"
-          label="是否进行计费"
-          v-if="props.keyVisible.title === '编辑密钥'"
-        >
-          <a-switch v-model="form.charging" />
-        </a-form-item>
-        <a-button type="primary" html-type="submit"> 确认</a-button>
-      </a-form>
+          <a-form-item field="limit" label="总额度">
+            <a-input-number v-model="form.limit" />
+          </a-form-item>
+          <a-form-item field="residue_limit" label="剩余额度">
+            <a-input-number v-model="form.residue_limit" />
+          </a-form-item>
+          <a-form-item
+            field="enable"
+            label="是否启用"
+            v-if="props.keyVisible.title === '编辑密钥'"
+          >
+            <a-switch v-model="form.enable" />
+          </a-form-item>
+          <a-form-item
+            field="charging"
+            label="是否进行计费"
+            v-if="props.keyVisible.title === '编辑密钥'"
+          >
+            <a-switch v-model="form.charging" />
+          </a-form-item>
+          <a-button type="primary" html-type="submit"> 确认</a-button>
+        </a-form>
+      </a-scrollbar>
     </a-modal>
   </div>
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits, reactive, watchEffect, onMounted } from "vue";
+import {
+  defineProps,
+  defineEmits,
+  reactive,
+  watchEffect,
+  onMounted,
+} from "vue";
 import { ValidatedError } from "@arco-design/web-vue/es/form/interface";
 import { Api } from "@/api/api";
 import { Message } from "@arco-design/web-vue";
 import { useRegistryStore, useUserStore } from "@/store";
+import { rules } from "@/components/backstage/pages/keys/config";
 
 const RegistryStore = useRegistryStore();
 const user_info = useUserStore().user_info;
@@ -120,38 +131,6 @@ const form = reactive<KeyInfo>({
   charging: false,
 });
 
-// 表单校验规则
-const rules = {
-  key: [
-    {
-      required: true,
-      message: "密钥 不可为空",
-    },
-  ],
-  key_introduction: [
-    {
-      required: false,
-    },
-  ],
-  availableModels: [
-    {
-      required: false,
-    },
-  ],
-  limit: [
-    {
-      required: true,
-      message: "可用额度 不可为空",
-    },
-  ],
-  residue_limit: [
-    {
-      required: true,
-      message: "剩余额度 不可为空",
-    },
-  ],
-};
-
 /**
  * 提交表单
  * @param values 表单数据
@@ -165,28 +144,52 @@ const handleSubmit = async ({
   errors: Record<string, ValidatedError> | undefined;
   values: KeyInfo;
 }) => {
-  if (!props.keyVisible.visible) return;
-  if (!errors) {
-    emit("setVisible", props.keyVisible.visible);
+  // 匹配弹窗标题
+  switch (props.keyVisible.title) {
+    // 添加模型
+    case "新建模型":
+      if (!errors) {
+        try {
+          values.user_name = user_info.username;
+          values.user_id = user_info._id;
 
-    try {
-      values.user_name = user_info.username;
-      values.user_id = user_info._id;
+          const res = await Api.add_key(values);
 
-      const res = await Api.add_key(values);
-
-      if (res.status_code === 200) {
-        Message.success(res.message);
-        emit("requestData");
-      } else {
-        Message.error(res.message);
+          if (res.status_code === 200) {
+            Message.success(res.message);
+            emit("requestData");
+          } else {
+            Message.error(res.message);
+          }
+        } catch (err) {
+          console.log("添加失败");
+        } finally {
+          emit("setVisible", { visible: false, title: null });
+        }
       }
-    } catch (err) {
-      console.log("添加失败");
-    } finally {
-      emit("setVisible", { visible: false, title: null });
-    }
+      break;
+    // 编辑密钥
+    case "编辑密钥":
+      if (!errors) {
+        try {
+          const res = await Api.update_key(form);
+          if (res.status_code === 200) {
+            Message.success(res.message);
+            emit("requestData");
+          } else {
+            Message.error(res.message);
+          }
+        } catch (err) {
+          console.log("添加失败");
+        } finally {
+          emit("setVisible", { visible: false, title: null });
+        }
+      }
+      break;
+    default:
+      break;
   }
+
 };
 
 // 监听弹窗状态 改变时 重置表单数据
@@ -208,7 +211,10 @@ watchEffect(() => {
         break;
       // 编辑密钥
       case "编辑密钥":
+        form.id = props.keyInfo._id;
+        form.user_id = props.keyInfo.user_id;
         form.key = props.keyInfo.key;
+        form.user_name = props.keyInfo.user_name;
         form.key_introduction = props.keyInfo.key_introduction;
         form.availableModels = props.keyInfo.availableModels;
         form.limit = props.keyInfo.limit;

@@ -88,6 +88,8 @@ import { ValidatedError } from "@arco-design/web-vue/es/form/interface";
 import { Api } from "@/api/api";
 import { Message } from "@arco-design/web-vue";
 import { useUserStore } from "@/store";
+import { modelTag, rules } from "@/components/backstage/pages/model/config";
+
 
 const user_info = useUserStore().user_info;
 
@@ -104,6 +106,7 @@ const props = defineProps({
     type: Object,
     required: true,
     default: {
+      _id: "",
       user_name: "",
       base_url: "",
       model_name: "",
@@ -117,18 +120,6 @@ const props = defineProps({
     },
   },
 });
-
-const modelTag = [
-  '文本生成',
-  "视频理解",
-  "视频生成",
-  "图片处理",
-  "图片理解",
-  "图片生成",
-  "向量模型",
-  "语音合成",
-  "语音识别",
-]
 
 const emit = defineEmits(["setVisible", "requestData"]);
 
@@ -147,58 +138,6 @@ const form = reactive<ModelInfoForm>({
   charging: false,
 });
 
-// 表单校验规则
-const rules = {
-  base_url: [
-    {
-      type: "url",
-      required: true,
-      message: "Base url 不可为空",
-    },
-  ],
-  Model_name: [
-    {
-      required: true,
-      message: "模型名 不可为空",
-    },
-  ],
-  Model_call: [
-    {
-      required: true,
-      message: "模型调用名 不可为空",
-    },
-  ],
-  Model_introduction: [
-    {
-      required: false,
-    },
-  ],
-  Model_call_input: [
-    {
-      required: true,
-      message: "模型输入计费 不可为空",
-    },
-  ],
-  Model_call_output: [
-    {
-      required: true,
-      message: "模型输出计费 不可为空",
-    },
-  ],
-  limit: [
-    {
-      required: true,
-      message: "可用额度 不可为空",
-    },
-  ],
-  residue_limit: [
-    {
-      required: true,
-      message: "剩余额度 不可为空",
-    },
-  ],
-};
-
 /**
  * 提交表单
  * @param values 表单数据
@@ -210,30 +149,57 @@ const handleSubmit = async ({
   values,
 }: {
   errors: Record<string, ValidatedError> | undefined;
-  values: ModelInfo;
+  values: ModelInfoForm;
 }) => {
-  if (!props.modalVisible.visible) return;
-  if (!errors) {
-    emit("setVisible", props.modalVisible.visible);
 
-    try {
-      values.user_name = user_info.username;
-      values.user_id = user_info._id;
+  switch (props.modalVisible.title) {
+    // 添加模型
+    case "新建模型":
+      if (!errors) {
+        try {
+          values.user_name = user_info.username;
+          values.user_id = user_info._id;
 
-      const res = await Api.add_model(values);
+          const res = await Api.add_model(values);
 
-      if (res.status_code === 200) {
-        Message.success(res.message);
-        emit("requestData");
-      } else {
-        Message.error(res.message);
+          if (res.status_code === 200) {
+            Message.success(res.message);
+            emit("requestData");
+          } else {
+            Message.error(res.message);
+          }
+        } catch (err) {
+          console.log("添加失败");
+        } finally {
+          emit("setVisible", { visible: false, title: null });
+        }
       }
-    } catch (err) {
-      console.log("添加失败");
-    } finally {
-      emit("setVisible", { visible: false, title: null });
-    }
+      break;
+    // 编辑模型
+    case "编辑模型":
+      if (!errors) {
+        try {
+          values.user_name = user_info.username;
+          values.user_id = user_info._id;
+          const res = await Api.update_model(values);
+          if (res.status_code === 200) {
+            Message.success(res.message);
+            emit("requestData");
+          } else {
+            Message.error(res.message);
+          }
+        } catch (err) {
+          console.log("添加失败");
+        } finally {
+          emit("setVisible", { visible: false, title: null });
+        }
+      }
+      break;
+    default:
+      break;
   }
+
+
 };
 
 // 监听弹窗状态 改变时 重置表单数据
@@ -259,6 +225,9 @@ watchEffect(() => {
         break;
       // 编辑模型
       case "编辑模型":
+        form.id = props.modelInfo._id;
+        form.user_name = props.modelInfo.user_name;
+        form.user_id = props.modelInfo.user_id;
         form.base_url = props.modelInfo.base_url;
         form.Model_name = props.modelInfo.model_name;
         form.Model_call = props.modelInfo.model_call;

@@ -48,7 +48,6 @@ async def v1_retrieve_key(data):
                 "created_at": False,
                 "is_deleted": False,
                 "updated_at": False,
-                "user_id": False,
             })
         model_cline.close_connection()
 

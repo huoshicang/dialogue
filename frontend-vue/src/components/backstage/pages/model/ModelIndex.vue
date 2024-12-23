@@ -39,17 +39,10 @@
         </a-space>
       </template>
       <template #optional="{ record }">
-        <a-dropdown @select="handleSelect">
-          <a-button>操作</a-button>
-          <template #content>
-            <a-doption
-              :value="{ value: '编辑' }"
-              @click="setModelInfo({ ...record })"
-              >编辑
-            </a-doption>
-            <a-doption :value="{ value: '删除' }">删除</a-doption>
-          </template>
-        </a-dropdown>
+        <a-button-group type="primary" size="mini">
+          <a-button @click="editModelInfo({ ...record })"> 编辑</a-button>
+          <a-button> 删除</a-button>
+        </a-button-group>
       </template>
     </a-table>
 
@@ -71,95 +64,11 @@ import { useUserStore } from "@/store";
 import { useRouter } from "vue-router";
 import { Api } from "@/api/api";
 import { Message } from "@arco-design/web-vue";
-import { get_model_table_type } from "@/types/Response/ApiTypes";
+import { columns } from "@/components/backstage/pages/model/config";
 
 const router = useRouter();
 const user_info = useUserStore().user_info;
 
-// 表头
-const columns = [
-  {
-    title: "创建人",
-    dataIndex: "user_name",
-    slotName: "user_name",
-    width: 60,
-    align: "center",
-  },
-  {
-    title: "模型名",
-    dataIndex: "model_name",
-    ellipsis: true,
-    tooltip: true,
-    width: 90,
-    align: "center",
-  },
-  {
-    title: "调用名",
-    dataIndex: "model_call",
-    ellipsis: true,
-    tooltip: true,
-    width: 90,
-    align: "center",
-  },
-  {
-    title: "Base URL",
-    dataIndex: "base_url",
-    ellipsis: true,
-    tooltip: true,
-    width: 100,
-    align: "center",
-  },
-  {
-    title: "输入",
-    dataIndex: "model_call_input",
-    width: 50,
-    align: "center",
-  },
-  {
-    title: "输出",
-    dataIndex: "model_call_output",
-    width: 50,
-    align: "center",
-  },
-  {
-    title: "额度",
-    slotName: "limit",
-    width: 120,
-    align: "center",
-  },
-  {
-    title: "计费",
-    slotName: "charging",
-    width: 50,
-    align: "center",
-  },
-  {
-    title: "状态",
-    slotName: "enable",
-    width: 50,
-    align: "center",
-  },
-  {
-    title: "描述",
-    dataIndex: "model_introduction",
-    ellipsis: true,
-    tooltip: true,
-    width: 100,
-    align: "center",
-  },
-  {
-    title: "标签",
-    slotName: "modelTag",
-    align: "center",
-    width: 110,
-  },
-  {
-    title: "操作",
-    slotName: "optional",
-    width: 60,
-    align: "center",
-  },
-];
 
 // 表格数据
 const tableData = ref<ModelInfo[] | []>([]);
@@ -177,7 +86,6 @@ const modalVisible = ref<{
 
 // 模型数据
 const modelInfo = ref<ModelInfo>({
-  user_name: "",
   base_url: "",
   model_name: "",
   model_call: "",
@@ -204,35 +112,16 @@ const setVisible = (setVisible: { visible: boolean; title: string }): void => {
   modalVisible.value.title = setVisible.title;
 };
 
-// 表格按钮选项
-const handleSelect = (v) => {
-  if (v.value === "编辑") {
-    setVisible({
-      visible: true,
-      title: "编辑模型",
-    });
-  }
-};
-
 // 点击编辑设置弹窗数据
-const setModelInfo = (data: ModelInfo): void => {
-  modelInfo.value.user_name = data.user_name;
-  modelInfo.value.base_url = data.base_url;
-  modelInfo.value.model_name = data.model_name;
-  modelInfo.value.model_call = data.model_call;
-  modelInfo.value.model_introduction = data.model_introduction;
-  modelInfo.value.model_call_input = data.model_call_input;
-  modelInfo.value.model_call_output = data.model_call_output;
-  modelInfo.value.limit = data.limit;
-  modelInfo.value.residue_limit = data.residue_limit;
-  modelInfo.value.charging = data.charging;
-  modelInfo.value.enable = data.enable;
+const editModelInfo = (data: ModelInfo): void => {
+  setVisible({ visible: true, title: "编辑模型" });
+  modelInfo.value = data;
 };
 
 // 请求数据
 const requestData = async () => {
   try {
-    const res = await Api.get_model_table<get_model_table_type>({
+    const res = await Api.get_model_table({
       user_id: user_info._id,
       user_name: user_info.username,
       user_role: user_info.role,

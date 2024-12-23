@@ -32,17 +32,10 @@
         </a-space>
       </template>
       <template #optional="{ record }">
-        <a-dropdown @select="handleSelect">
-          <a-button>操作</a-button>
-          <template #content>
-            <a-doption
-              :value="{ value: '编辑' }"
-              @click="setKeyInfo({ ...record })"
-              >编辑
-            </a-doption>
-            <a-doption :value="{ value: '删除' }">删除</a-doption>
-          </template>
-        </a-dropdown>
+        <a-button-group type="primary" size="mini">
+          <a-button @click="editKeyInfo({ ...record })"> 编辑</a-button>
+          <a-button> 删除</a-button>
+        </a-button-group>
       </template>
     </a-table>
 
@@ -64,66 +57,10 @@ import { useUserStore } from "@/store";
 import { useRouter } from "vue-router";
 import { Api } from "@/api/api";
 import { Message } from "@arco-design/web-vue";
+import { columns } from "@/components/backstage/pages/keys/config";
 
 const router = useRouter();
 const user_info = useUserStore().user_info;
-
-// 表头
-const columns = [
-  {
-    title: "创建人",
-    dataIndex: "user_name",
-    slotName: "user_name",
-    width: 60,
-    align: "center",
-  },
-  {
-    title: "密钥",
-    dataIndex: "key",
-    ellipsis: true,
-    tooltip: true,
-    width: 90,
-    align: "center",
-  },
-  {
-    title: "额度",
-    slotName: "limit",
-    width: 120,
-    align: "center",
-  },
-  {
-    title: "可用模型",
-    slotName: "availableModels",
-    align: "center",
-    width: 300,
-  },
-  {
-    title: "计费",
-    slotName: "charging",
-    width: 50,
-    align: "center",
-  },
-  {
-    title: "状态",
-    slotName: "enable",
-    width: 50,
-    align: "center",
-  },
-  {
-    title: "描述",
-    dataIndex: "key_introduction",
-    ellipsis: true,
-    tooltip: true,
-    width: 100,
-    align: "center",
-  },
-  {
-    title: "操作",
-    slotName: "optional",
-    width: 60,
-    align: "center",
-  },
-];
 
 // 表格数据
 const tableData = ref<KeyInfo[] | []>([]);
@@ -166,13 +103,9 @@ const setVisible = (setVisible: { visible: boolean; title: string }): void => {
 };
 
 // 表格按钮选项
-const handleSelect = (v) => {
-  if (v.value === "编辑") {
-    setVisible({
-      visible: true,
-      title: "编辑密钥",
-    });
-  }
+const editKeyInfo = (v) => {
+  setVisible({ visible: true, title: "编辑密钥" });
+  keyInfo.value = v;
 };
 
 // 点击编辑设置弹窗数据

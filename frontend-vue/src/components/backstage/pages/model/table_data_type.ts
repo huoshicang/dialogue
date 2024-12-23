@@ -1,10 +1,11 @@
 interface ModelInfo {
-  user_id?: string;
+  _id?: string;
   user_name?: string;
   base_url: string;
   model_name: string;
   model_call: string;
   model_introduction: string;
+  model_tag?: [],
   model_call_input: number | null;
   model_call_output: number | null;
   limit: number | null;
@@ -14,6 +15,9 @@ interface ModelInfo {
 }
 
 interface ModelInfoForm {
+  id?: string;
+  user_id?: string;
+  user_name?: string;
   base_url: string;
   Model_name: string;
   Model_call: string;

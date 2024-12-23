@@ -14,7 +14,7 @@
         <ChatContent v-else :messageList="messageList" />
       </a-layout-content>
       <a-layout-footer>
-        <ChatFooter @sendMessage="sendMessage" :sendLoding="sendLoding" />
+        <ChatFooter @sendMessage="sendMessage" @clearMessage="clearMessage" :sendLoding="sendLoding" />
       </a-layout-footer>
     </a-layout>
   </a-layout>
@@ -40,14 +40,14 @@ const chatId = ref<string | undefined | null>(null);
 const messageList = ref([]);
 
 /*
-* 获取聊天记录
-* @param id 聊天id
-* @return void
-* */
+ * 获取聊天记录
+ * @param id 聊天id
+ * @return void
+ * */
 const getMessage = async (id) => {
   if (!id) {
     chatId.value = null;
-    return
+    return;
   }
   chatId.value = id;
 
@@ -66,13 +66,16 @@ const getMessage = async (id) => {
 };
 
 /*
-* 发送消息
-* @param sendMessage 发送的消息
-* @return void
-* */
+ * 发送消息
+ * @param sendMessage 发送的消息
+ * @return void
+ * */
 const sendMessage = (sendMessage) => {
   sendLoding.value = true;
-  const host = process.env.VUE_APP_WS_BALEURL !== "/dialogue/message" ? process.env.VUE_APP_BALEURL.replace(`${window.location.protocol}//`, "") : window.location.host;
+  const host =
+    process.env.VUE_APP_WS_BALEURL !== "/dialogue/message"
+      ? process.env.VUE_APP_BALEURL.replace(`${window.location.protocol}//`, "")
+      : window.location.host;
 
   const protocol = window.location.protocol === "https:" ? "wss" : "ws";
   const socket = new WebSocket(
@@ -81,14 +84,18 @@ const sendMessage = (sendMessage) => {
   let messageListIndex = null;
 
   socket.onopen = function () {
+    // 添加消息到列表
     messageList.value.push({
       content: sendMessage,
       role: "user",
     });
+
+    // 添加回复消息
     messageList.value.push({
       content: "",
       role: "assistant",
     });
+    // 获取消息列表最后一项的索引
     messageListIndex = messageList.value.length - 1;
     // 发送初始消息或参数
     socket.send(
@@ -101,29 +108,43 @@ const sendMessage = (sendMessage) => {
   };
 
   /*
-  * 接收消息
-  * @param event 接收到的消息
-  * @return void
-  * */
+   * 接收消息 拼接到最后一项
+   * @param event 接收到的消息
+   * @return void
+   * */
   socket.onmessage = function (event) {
     if (event.data)
       messageList.value[messageListIndex]["content"] += event.data;
   };
 
   /*
-  * 错误处理
-  * @return void
-  * */
+   * 错误处理
+   * @return void
+   * */
   socket.onerror = function (error) {
     messageList.value[messageListIndex]["content"] = error;
     sendLoding.value = false;
   };
 
   socket.onclose = function () {
-    console.log("WebSocket连接已关闭");
     sendLoding.value = false;
   };
 };
+
+
+/*
+* 清空消息
+* @return void
+* */
+const clearMessage = () => {
+  if (messageList.value && messageList.value.length > 0 && messageList.value[0].role === 'system') {
+    // 如果数组存在，长度大于0，且第一项的role为'system'，则保留第一项，删除其他项
+    messageList.value = [messageList.value[0]];
+  } else {
+    // 如果第一项的role不为'system'，则清空数组
+    messageList.value = [];
+  }
+}
 
 watch(() => route.params.id, getMessage, { immediate: true });
 
@@ -132,18 +153,14 @@ onMounted(() => {
 });
 </script>
 
-<style scoped>
+<style scoped lang="less">
 .layout-demo-chat {
   display: flex;
   height: 100%;
-}
 
-.layout-demo-chat :deep(.arco-layout-content) {
-}
-
-.layout-demo-chat :deep(.arco-layout-footer) {
-  background-color: var(--color-bg-2);
-  //border-top: 1px solid var(--color-border);
-  max-height: 160px;
+  :deep(.arco-layout-footer) {
+    background-color: var(--color-bg-2);
+    max-height: 160px;
+  }
 }
 </style>

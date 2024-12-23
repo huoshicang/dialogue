@@ -1,5 +1,16 @@
+<template>
+  <div class="text-black" :class="wrapClass">
+    <div ref="textRef" class="leading-relaxed break-words">
+      <div>
+        <div v-if="!asRawText" class="markdown-body" v-html="text" />
+        <div v-else class="whitespace-pre-wrap" v-text="text" />
+      </div>
+    </div>
+  </div>
+</template>
+
 <script lang="ts" setup>
-import { computed, onMounted, onUnmounted, onUpdated, ref } from "vue";
+import { computed, onMounted, onUnmounted, onUpdated, ref, defineProps } from "vue";
 import MarkdownIt from "markdown-it";
 import MdKatex from "@vscode/markdown-it-katex";
 import MdLinkAttributes from "markdown-it-link-attributes";
@@ -8,14 +19,25 @@ import hljs from "highlight.js";
 import { useBasicLayout } from "@/hooks/useBasicLayout";
 import { copyToClip } from "@/utils/copy";
 
-interface Props {
-  inversion?: boolean;
-  error?: boolean;
-  text?: string;
-  asRawText?: boolean;
-}
+const props = defineProps({
+  // 是否为错误信息
+  error: {
+    type: Boolean,
+    default: false,
+  },
 
-const props = defineProps<Props>();
+  // 文本内容
+  text: {
+    type: String,
+    default: "",
+  },
+
+  // 是否为纯文本
+  asRawText: {
+    type: Boolean,
+    default: false,
+  },
+});
 
 const { isMobile } = useBasicLayout();
 
@@ -48,9 +70,6 @@ const wrapClass = computed(() => {
     "min-w-[20px]",
     "rounded-md",
     isMobile.value ? "p-2" : "px-3 py-2",
-    props.inversion ? "bg-[#d2f9d1]" : "bg-[#f4f6f8]",
-    props.inversion ? "dark:bg-[#a1dc95]" : "dark:bg-[#1e1e20]",
-    props.inversion ? "message-request" : "message-reply",
     { "text-red-500": props.error },
   ];
 });
@@ -65,11 +84,19 @@ const text = computed(() => {
   return value;
 });
 
-function highlightBlock(str: string, lang?: string) {
+/*
+* 高亮块
+* @param str 文本
+* @param lang 语言
+* */
+const highlightBlock = (str: string, lang?: string) => {
   return `<pre class="code-block-wrapper"><div class="code-block-header"><span class="code-block-header__lang">${lang}</span><span class="code-block-header__copy">复制代码</span></div><code class="hljs code-block-body ${lang}">${str}</code></pre>`;
 }
 
-function addCopyEvents() {
+/*
+* 添加复制事件
+* */
+const addCopyEvents = () => {
   if (textRef.value) {
     const copyBtn = textRef.value.querySelectorAll(".code-block-header__copy");
     copyBtn.forEach((btn) => {
@@ -88,6 +115,9 @@ function addCopyEvents() {
   }
 }
 
+/*
+* 移除复制事件
+* */
 function removeCopyEvents() {
   if (textRef.value) {
     const copyBtn = textRef.value.querySelectorAll(".code-block-header__copy");
@@ -138,22 +168,6 @@ onUnmounted(() => {
   removeCopyEvents();
 });
 </script>
-
-<template>
-  <div class="text-black" :class="wrapClass">
-    <div ref="textRef" class="leading-relaxed break-words">
-      <div v-if="!inversion">
-        <div
-          v-if="!asRawText"
-          class="markdown-body"
-          v-html="text"
-        />
-        <div v-else class="whitespace-pre-wrap" v-text="text" />
-      </div>
-      <div v-else class="whitespace-pre-wrap" v-text="text" />
-    </div>
-  </div>
-</template>
 
 <style lang="less">
 @import url(./style.less);

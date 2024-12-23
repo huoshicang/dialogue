@@ -29,6 +29,7 @@ async def v1_create_chat(data):
         # 参数
         chat_parameters = data['chat_parameters']
 
+        # 获取key
         key_client = MongoDBClient("keys")
         key_find_info = key_client.find_data_many_sort(
             {
@@ -66,7 +67,8 @@ async def v1_create_chat(data):
             "tools": chat_parameters['tools'],
             "stream_options": chat_parameters['stream_options'],
             "enable_search": chat_parameters['enable_search'],
-            "key": str(key_find_info[0]['_id'])
+            "key": str(key_find_info[0]['_id']),
+            "user_id": data['user_id'],
         })
         message_client.close_connection()
 

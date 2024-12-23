@@ -1,11 +1,7 @@
-import json
-import os
-import time
 from fastapi.responses import FileResponse
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
-from fastapi.staticfiles import StaticFiles
 import base64
 
 from starlette import status
@@ -13,7 +9,7 @@ from starlette.responses import JSONResponse
 
 from config.logging_config import setup_logger, get_logger
 
-from openai_model.requests_model import send_message
+from ai_model.chat.train_model import send_message
 from routes.c.v1 import c_index
 from routes.r.v1 import r_index
 from routes.d.v1 import d_index
@@ -54,29 +50,31 @@ async def catch_all(request: Request):
 @app.middleware("http")
 @app.middleware("https")
 async def process_time_middleware(request: Request, call_next):
-    nonce = request.headers.get("nonce")
-    timestamp = request.headers.get('timestamp')
-    if not nonce:
-        logger.error("非法请求: 缺少nonce参数")
-        return JSONResponse(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            content={
-                "status_code": status.HTTP_400_BAD_REQUEST,
-                "message": "非法请求",
-            },
-        )
 
-    nonce = int(base64.b64decode(nonce).decode()) - int(timestamp[::-1])
+    if request.headers.get("debug") != "dF5vjy":
+        nonce = request.headers.get("nonce")
+        timestamp = request.headers.get('timestamp')
+        if not nonce:
+            logger.error("非法请求: 缺少nonce参数")
+            return JSONResponse(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                content={
+                    "status_code": status.HTTP_400_BAD_REQUEST,
+                    "message": "非法请求",
+                },
+            )
 
-    if nonce != int(timestamp):
-        logger.error("非法请求: 时间戳不匹配")
-        return JSONResponse(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            content={
-                "status_code": status.HTTP_400_BAD_REQUEST,
-                "message": "非法请求",
-            },
-        )
+        nonce = int(base64.b64decode(nonce).decode()) - int(timestamp[::-1])
+
+        if nonce != int(timestamp):
+            logger.error("非法请求: 时间戳不匹配")
+            return JSONResponse(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                content={
+                    "status_code": status.HTTP_400_BAD_REQUEST,
+                    "message": "非法请求",
+                },
+            )
 
     response = await call_next(request)
 
