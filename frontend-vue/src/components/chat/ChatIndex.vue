@@ -158,6 +158,12 @@ onMounted(() => {
   display: flex;
   height: 100%;
 
+  :deep(.arco-layout-content){
+    :deep(.arco-textarea-wrapper) {
+
+    }
+  }
+
   :deep(.arco-layout-footer) {
     background-color: var(--color-bg-2);
     max-height: 160px;

@@ -109,8 +109,12 @@ class MongoDBClient:
         :return: 更新结果
         """
         try:
-
-            update['$set']['updated_at'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            if update.get("$set"):
+                update['$set']['updated_at'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            else:
+                update['$set'] = {
+                    "updated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                }
 
             result = self.collection.update_one(query, update)
             return result

@@ -1,4 +1,3 @@
-
 from fastapi import APIRouter
 from pydantic import BaseModel
 
@@ -20,9 +19,11 @@ class Chat(BaseModel):
     message_id: str | int
     user_id: str | int
 
+
 @d_v1_router.post("/chat")
 async def delete_chat(chat_data: Chat):
-    logger.info(f"删除聊天会话，chat_id: {chat_data.chat_id}, message_id: {chat_data.message_id}, user_id: {chat_data.user_id}")
+    logger.info(
+        f"删除聊天会话，chat_id: {chat_data.chat_id}, message_id: {chat_data.message_id}, user_id: {chat_data.user_id}")
     return await v1_delete_chat({
         "chat_id": chat_data.chat_id,
         "message_id": chat_data.message_id,
@@ -36,6 +37,7 @@ class Message(BaseModel):
     """
     chat_id: str | int
     user_id: str | int
+
 
 @d_v1_router.post("/message")
 async def delete_message(message_data: Message):

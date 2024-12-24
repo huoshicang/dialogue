@@ -56,6 +56,16 @@
             <a-tag size="large"> {{ user_info.updated_at }}</a-tag>
           </n-descriptions-item>
         </n-descriptions>
+        <a-card :bordered="false">
+          <n-descriptions>
+            <n-descriptions-item label="发送快捷键">
+              <a-switch unchecked-color="#14C9C9" @change="handleSwitch" :v-model:model-value='submitKeyConfig'>
+                <template #checked> Ctrl + Enter </template>
+                <template #unchecked> Enter </template>
+              </a-switch>
+            </n-descriptions-item>
+          </n-descriptions>
+        </a-card>
       </div>
     </a-modal>
   </div>
@@ -63,7 +73,7 @@
 
 <script setup lang="ts">
 import { useRouter } from "vue-router";
-import { defineProps, defineEmits } from "vue";
+import { defineProps, defineEmits, ref } from "vue";
 import { useUserStore } from "@/store";
 
 const user_info = useUserStore().user_info;
@@ -83,9 +93,18 @@ const handleOk = () => {
   emit("setVisible", false);
 };
 
+const submitKeyConfig = ref(localStorage.getItem("submitKeyConfig") || "ctrlEnter")
+
+// 跳转后台
 const toBackstage = () => {
   emit("setVisible", false);
   router.push("/backstage");
+};
+
+// 切换快捷键
+const handleSwitch = (value: boolean | string | number, ev: Event) => {
+  const submitKeyConfig = value ? "ctrlEnter" : "enter";
+  localStorage.setItem("submitKeyConfig", submitKeyConfig)
 };
 </script>
 

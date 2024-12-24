@@ -21,7 +21,7 @@ async def websocket_endpoint(websocket: WebSocket):
         # 接收并解析客户端发送的JSON数据
         data = json.loads(await websocket.receive_text())
         tokens = count_tokens(data["sendMessage"])
-        logger.info(f"请求tokens：{tokens}")
+        logger.info(f"请求tokens {tokens}")
 
         # 获取用户信息并检查用户额度
         user_info = getUserInfo(userId=data["userId"], tokens=tokens)
@@ -29,7 +29,7 @@ async def websocket_endpoint(websocket: WebSocket):
             charging=user_info["charging"],
             tokens=tokens,
             limit=user_info["limit"],
-            error_message=f"用户{data['userId']}无额度",
+            error_message=f"用户 {data['userId']} 无额度",
         ):
             await websocket.send_text("额度不足")
             await websocket.close()
@@ -38,7 +38,7 @@ async def websocket_endpoint(websocket: WebSocket):
         # 获取消息信息
         message_info = getMessage(data=data)
         if not message_info:
-            logger.error(f"用户{data['userId']}无消息")
+            logger.error(f"用户 {data['userId']} 无消息")
             await websocket.send_text("找不到消息")
             await websocket.close()
             return
@@ -54,7 +54,7 @@ async def websocket_endpoint(websocket: WebSocket):
             charging=key_info["charging"],
             tokens=tokens,
             limit=key_info["residue_limit"],
-            error_message=f"密钥{message_info['key']}额度不足",
+            error_message=f"密钥 {message_info['key']} 额度不足",
         ):
             await websocket.send_text("密钥可用额度不足")
             await websocket.close()
@@ -66,7 +66,7 @@ async def websocket_endpoint(websocket: WebSocket):
             charging=base_url["charging"],
             tokens=tokens,
             limit=base_url["residue_limit"],
-            error_message=f"模型{message_info['model']}无额度",
+            error_message=f"模型 {message_info['model']} 无额度",
         ):
             await websocket.send_text("模型可用额度不足")
             await websocket.close()
@@ -80,7 +80,7 @@ async def websocket_endpoint(websocket: WebSocket):
 
         # 处理模型回复
         if completion_signs:
-            logger.info(f"用户{data['userId']}请求模型{message_info['model']}")
+            logger.info(f"用户 {data['userId']} 请求模型 {message_info['model']}")
             for chunk in completion:
                 info = json.loads(chunk.model_dump_json())
                 if not assistant_content_info:
@@ -130,7 +130,7 @@ async def websocket_endpoint(websocket: WebSocket):
                     newLimit=base_url["residue_limit"] - total_tokens,
                 )
         else:
-            logger.error(f"用户{data['userId']}请求模型{message_info['model']}发生错误")
+            logger.error(f"用户 {data['userId']} 请求模型 {message_info['model']} 发生错误")
             logger.error(completion)
             await websocket.send_text(str(completion))
     except Exception as e:
